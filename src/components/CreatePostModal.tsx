@@ -54,7 +54,6 @@ export const CreatePostModal = () => {
           ref={webcamRef}
           mirrored
           audio={false}
-          screenshotFormat="image/jpeg"
           className="h-full object-cover"
           videoConstraints={{
             facingMode: "user",
