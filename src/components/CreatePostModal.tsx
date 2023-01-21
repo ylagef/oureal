@@ -4,12 +4,14 @@ import Webcam from "react-webcam";
 export const CreatePostModal = () => {
   const webcamRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
+  const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
     const lsAcceptedTerms = localStorage.getItem("acceptedTerms") === "true";
     const lsImageTaken = localStorage.getItem("imageTaken") === "true";
+    const lsImageBase64 = localStorage.getItem("imageBase64");
+    if (lsImageBase64) setImageSrc(lsImageBase64);
 
-    console.log({ lsAcceptedTerms, lsImageTaken });
     setShowModal(lsAcceptedTerms && !lsImageTaken);
   }, []);
 
@@ -17,14 +19,25 @@ export const CreatePostModal = () => {
     if (!webcamRef.current) return;
     const currentWebcam = webcamRef.current as any;
     const imageSrc = currentWebcam.getScreenshot();
-    console.log({ imageSrc });
+    setImageSrc(imageSrc);
     localStorage.setItem("imageTaken", "true");
     localStorage.setItem("imageBase64", imageSrc);
-
-    setShowModal(false);
   };
 
+  console.log({ imageSrc });
+
   if (!showModal) return null;
+
+  if (imageSrc)
+    return (
+      <>
+        <h1>he</h1>
+        <img
+          src={imageSrc}
+          className="absolute top-0 left-0 w-50 h-100 object-cover"
+        />
+      </>
+    );
 
   return (
     <div className="absolute top-0 left-0 w-screen h-screen bg-background">
