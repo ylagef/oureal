@@ -1,0 +1,12 @@
+---
+import { CreatePostModal } from "../components/CreatePostModal";
+import { TermsModal } from "../components/TermsModal";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="OuReal. - Entroido">
+  <main>
+    <TermsModal client:load />
+    <CreatePostModal client:load />
+  </main>
+</Layout>
