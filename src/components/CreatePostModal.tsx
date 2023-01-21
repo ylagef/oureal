@@ -34,10 +34,9 @@ export const CreatePostModal = () => {
           mirrored
           audio={false}
           screenshotFormat="image/jpeg"
+          className="h-full object-cover"
           videoConstraints={{
             facingMode: "user",
-            height: 1920,
-            aspectRatio: 1920 / 1080,
           }}
         />
 
