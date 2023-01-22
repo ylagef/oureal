@@ -3,41 +3,46 @@ import Webcam from "react-webcam";
 import { decode } from "base64-arraybuffer";
 import { createPost } from "../utils/supabase";
 
-export const CreatePostModal = () => {
+export const CreatePost = () => {
   const webcamRef = useRef(null);
-  const [imageSrc, setImageSrc] = useState("");
-
-  useEffect(() => {
-    const lsImageTaken = localStorage.getItem("imageTaken") === "true";
-    const lsImageBase64 = localStorage.getItem("imageBase64");
-    if (lsImageBase64) setImageSrc(lsImageBase64);
-  }, []);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   const handleTake = async () => {
     if (!webcamRef.current) return;
     const currentWebcam = webcamRef.current as any;
     const imageBase64 = currentWebcam.getScreenshot();
     setImageSrc(imageBase64);
-    // localStorage.setItem("imageTaken", "true");
-    // localStorage.setItem("imageBase64", imageSrc);
+    localStorage.setItem("imageBase64", imageBase64);
+  };
+
+  const create = async () => {
+    if (!imageSrc) return;
 
     await createPost({
       name: "test",
       visible: true,
-      file: decode(imageBase64),
+      file: decode(imageSrc),
     });
   };
 
-  console.log({ imageSrc });
+  useEffect(() => {
+    setImageSrc(localStorage.getItem("imageBase64"));
+  }, []);
 
   if (imageSrc)
     return (
       <>
-        <h1>he</h1>
-        <img
-          src={imageSrc}
-          className="absolute top-0 left-0 w-50 h-100 object-cover"
-        />
+        <img src={imageSrc} className=" w-50 h-100 object-cover" />
+        <button
+          onClick={() => {
+            setImageSrc(null);
+            localStorage.removeItem("imageBase64");
+          }}
+        >
+          reset
+        </button>
+
+        <button onClick={create}>create</button>
       </>
     );
 

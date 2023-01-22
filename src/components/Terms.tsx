@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { OuRealLogo } from "./OuRealLogo";
 
-export const TermsModal = () => {
+export const Terms = () => {
   const [termsAccepted, setTermsAccepted] = useState(true);
 
   useEffect(() => {

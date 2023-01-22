@@ -1,23 +1,21 @@
 ---
-import { CreatePostModal } from "../components/CreatePostModal";
+import { CreatePost } from "../components/CreatePost";
 import { OuRealLogo } from "../components/OuRealLogo";
-import { TermsModal } from "../components/TermsModal";
+import { Terms } from "../components/Terms";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="OuReal. - Entroido">
   <script>
     const termsAccepted = localStorage.getItem("termsAccepted") === "true";
-    console.log(1);
+
     if (!termsAccepted) {
       window.location.href = "/terms";
     } else {
-      console.log(2);
       const imageTaken = localStorage.getItem("imageTaken") === "true";
       if (!imageTaken) {
         window.location.href = "/new";
       }
-      console.log(3);
     }
   </script>
 </Layout>
