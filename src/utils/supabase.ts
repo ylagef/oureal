@@ -51,8 +51,8 @@ export const uploadPostFile = async ({
 }) => {
   const { data, error } = await supabase.storage
     .from("posts")
-    .upload(id, file, {
-      contentType: `image/webp`,
+    .upload(`${id}.jpeg`, file, {
+      contentType: `image/jpeg`,
     });
 
   if (error) {

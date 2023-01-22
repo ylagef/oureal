@@ -20,15 +20,15 @@ export const CreatePostModal = () => {
   const handleTake = async () => {
     if (!webcamRef.current) return;
     const currentWebcam = webcamRef.current as any;
-    const imageSrc = currentWebcam.getScreenshot();
-    setImageSrc(imageSrc);
+    const imageBase64 = currentWebcam.getScreenshot();
+    setImageSrc(imageBase64);
     // localStorage.setItem("imageTaken", "true");
     // localStorage.setItem("imageBase64", imageSrc);
 
     await createPost({
       name: "test",
       visible: true,
-      file: decode(imageSrc),
+      file: decode(imageBase64),
     });
   };
 
@@ -48,13 +48,14 @@ export const CreatePostModal = () => {
     );
 
   return (
-    <div className="absolute top-0 left-0 w-screen h-screen bg-background">
-      <div className="w-screen h-screen relative grid items-center">
+    <div className="w-full h-full bg-background">
+      <div className="w-full h-full relative grid items-center">
         <Webcam
           ref={webcamRef}
           mirrored
           audio={false}
           className="h-full object-cover"
+          screenshotFormat="image/jpeg"
           videoConstraints={{
             facingMode: "user",
           }}
