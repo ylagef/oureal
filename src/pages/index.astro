@@ -6,8 +6,18 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="OuReal. - Entroido">
-  <OuRealLogo />
-  <main>
-    <TermsModal client:load />
-  </main>
+  <script>
+    const termsAccepted = localStorage.getItem("termsAccepted") === "true";
+    console.log(1);
+    if (!termsAccepted) {
+      window.location.href = "/terms";
+    } else {
+      console.log(2);
+      const imageTaken = localStorage.getItem("imageTaken") === "true";
+      if (!imageTaken) {
+        window.location.href = "/new";
+      }
+      console.log(3);
+    }
+  </script>
 </Layout>

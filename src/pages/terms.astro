@@ -7,15 +7,12 @@ import Layout from "../layouts/Layout.astro";
 <Layout title="OuReal. - Entroido">
   <script>
     const termsAccepted = localStorage.getItem("termsAccepted") === "true";
-    if (!termsAccepted) {
-      window.location.href = "/terms";
-    } else {
-      const imageTaken = localStorage.getItem("imageTaken") === "true";
-      if (imageTaken) {
-        window.location.href = "/feed";
-      }
+    const imageTaken = localStorage.getItem("imageTaken") === "true";
+
+    if (termsAccepted) {
+      window.location.href = imageTaken ? "/feed" : "/new";
     }
   </script>
 
-  <CreatePostModal client:load />
+  <TermsModal client:load />
 </Layout>

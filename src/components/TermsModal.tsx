@@ -2,20 +2,19 @@ import { useState, useEffect } from "react";
 import { OuRealLogo } from "./OuRealLogo";
 
 export const TermsModal = () => {
-  const [acceptedTerms, setAcceptedTerms] = useState(true);
+  const [termsAccepted, setTermsAccepted] = useState(true);
 
   useEffect(() => {
-    const lsAcceptedTerms = localStorage.getItem("acceptedTerms") === "true";
-    setAcceptedTerms(lsAcceptedTerms);
+    const lsTermsAccepted = localStorage.getItem("termsAccepted") === "true";
+    setTermsAccepted(lsTermsAccepted);
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem("acceptedTerms", "true");
-    setAcceptedTerms(true);
-    window.location.reload();
+    localStorage.setItem("termsAccepted", "true");
+    window.location.href = "/new";
   };
 
-  if (acceptedTerms) return null;
+  if (termsAccepted) return null;
 
   return (
     <div className="absolute top-0 left-0 w-screen h-screen bg-background px-4">

@@ -5,16 +5,12 @@ import { createPost } from "../utils/supabase";
 
 export const CreatePostModal = () => {
   const webcamRef = useRef(null);
-  const [showModal, setShowModal] = useState(false);
   const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
-    const lsAcceptedTerms = localStorage.getItem("acceptedTerms") === "true";
     const lsImageTaken = localStorage.getItem("imageTaken") === "true";
     const lsImageBase64 = localStorage.getItem("imageBase64");
     if (lsImageBase64) setImageSrc(lsImageBase64);
-
-    setShowModal(lsAcceptedTerms && !lsImageTaken);
   }, []);
 
   const handleTake = async () => {
@@ -33,8 +29,6 @@ export const CreatePostModal = () => {
   };
 
   console.log({ imageSrc });
-
-  if (!showModal) return null;
 
   if (imageSrc)
     return (
