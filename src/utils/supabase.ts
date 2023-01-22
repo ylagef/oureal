@@ -1,3 +1,4 @@
+import { decode } from "base64-arraybuffer";
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
@@ -15,11 +16,14 @@ interface Post {
 export const createPost = async ({
   name,
   visible,
-  file,
+  images,
 }: {
   name: string;
   visible: boolean;
-  file: ArrayBuffer;
+  images: {
+    user: string | null;
+    environment: string | null;
+  };
 }) => {
   const { data, error } = await supabase
     .from("posts")
@@ -37,27 +41,43 @@ export const createPost = async ({
 
   const post = data[0] as Post;
 
-  await uploadPostFile({ id: post.id, file });
+  await uploadPostFile({ id: post.id, images });
 
   return post;
 };
 
 export const uploadPostFile = async ({
   id,
-  file,
+  images,
 }: {
   id: string;
-  file: ArrayBuffer;
+  images: {
+    user: string | null;
+    environment: string | null;
+  };
 }) => {
-  const { data, error } = await supabase.storage
+  if (!images.user || !images.environment) return;
+
+  const { data: dataUser, error: errorUser } = await supabase.storage
     .from("posts")
-    .upload(`${id}.jpeg`, file, {
+    .upload(`${id}-user.jpeg`, decode(images.user), {
       contentType: `image/jpeg`,
     });
 
-  if (error) {
-    throw error;
+  if (errorUser) {
+    throw errorUser;
   }
 
-  return data;
+  const { data: dataEnvironment, error: errorEnvironment } =
+    await supabase.storage
+      .from("posts")
+      .upload(`${id}-environment.jpeg`, decode(images.environment), {
+        contentType: `image/jpeg`,
+      });
+
+  if (errorEnvironment) {
+    throw errorEnvironment;
+  }
+
+  return { dataUser, dataEnvironment };
 };

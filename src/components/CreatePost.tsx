@@ -3,13 +3,15 @@ import Webcam from "react-webcam";
 import { decode } from "base64-arraybuffer";
 import { createPost } from "../utils/supabase";
 
+interface Images {
+  user: string | null;
+  environment: string | null;
+}
+
 export const CreatePost = () => {
   const webcamRef = useRef(null);
   const [timer, setTimer] = useState<number | null>(null);
-  const [imageSrc, setImageSrc] = useState<{
-    user: string | null;
-    environment: string | null;
-  }>({
+  const [images, setImages] = useState<Images>({
     user: null,
     environment: null,
   });
@@ -45,50 +47,53 @@ export const CreatePost = () => {
     setFacingMode("environment");
     await showTimer(3);
 
-    setTimeout(() => {
-      const imageBase64Environment = currentWebcam.getScreenshot();
-      localStorage.setItem("imageBase64", imageBase64User);
-      setImageSrc({
-        user: imageBase64User,
-        environment: imageBase64Environment,
-      });
+    const imageBase64Environment = currentWebcam.getScreenshot();
+    const imagesObj: Images = {
+      user: imageBase64User,
+      environment: imageBase64Environment,
+    };
 
-      setFacingMode("user");
-    }, 2000);
+    setImages(imagesObj);
+    localStorage.setItem("images", JSON.stringify(imagesObj));
+
+    setFacingMode("user");
   };
 
   const handleCreatePost = async () => {
-    if (!imageSrc.user) return;
-
-    await createPost({
-      name: "test",
-      visible: true,
-      file: decode(imageSrc.user),
-    });
+    if (images.user && images.environment) {
+      await createPost({
+        name: "test",
+        visible: true,
+        images,
+      });
+    }
   };
 
   useEffect(() => {
-    setImageSrc({
-      user: localStorage.getItem("imageBase64"),
-      environment: null,
-    });
+    let lsImages = localStorage.getItem("images");
+    if (lsImages) {
+      const imagesObj = JSON.parse(lsImages) as Images;
+      setImages(imagesObj);
+    }
   }, []);
 
-  if (imageSrc.user)
+  if (images.user && images.environment) {
     return (
-      <>
-        {imageSrc.user && (
-          <img src={imageSrc.user} className=" w-50 h-100 object-cover" />
+      <div className="relative">
+        {images.user && (
+          <img src={images.user} className="w-50 h-100 object-cover" />
         )}
-        {imageSrc.environment && (
+
+        {images.environment && (
           <img
-            src={imageSrc.environment}
-            className=" w-50 h-100 object-cover"
+            src={images.environment}
+            className="absolute top-0 left-0 w-10 object-cover"
           />
         )}
+
         <button
           onClick={() => {
-            setImageSrc({
+            setImages({
               user: null,
               environment: null,
             });
@@ -99,8 +104,9 @@ export const CreatePost = () => {
         </button>
 
         <button onClick={handleCreatePost}>create</button>
-      </>
+      </div>
     );
+  }
 
   return (
     <div className="w-full h-full bg-background">
