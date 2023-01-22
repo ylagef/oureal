@@ -5,6 +5,7 @@ import { createPost } from "../utils/supabase";
 
 export const CreatePost = () => {
   const webcamRef = useRef(null);
+  const [timer, setTimer] = useState<number | null>(null);
   const [imageSrc, setImageSrc] = useState<{
     user: string | null;
     environment: string | null;
@@ -14,13 +15,35 @@ export const CreatePost = () => {
   });
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
 
+  const showTimer = async (value: number) => {
+    return new Promise((resolve) => {
+      setTimer(value);
+
+      const interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev === null) {
+            clearInterval(interval);
+            resolve(null);
+          }
+
+          if (prev !== null && prev > 1) {
+            return prev - 1;
+          }
+
+          return null;
+        });
+      }, 1000);
+    });
+  };
+
   const handleTake = async () => {
     if (!webcamRef.current) return;
-
+    await showTimer(3);
     const currentWebcam = webcamRef.current as any;
     const imageBase64User = currentWebcam.getScreenshot();
 
     setFacingMode("environment");
+    await showTimer(3);
 
     setTimeout(() => {
       const imageBase64Environment = currentWebcam.getScreenshot();
@@ -29,7 +52,9 @@ export const CreatePost = () => {
         user: imageBase64User,
         environment: imageBase64Environment,
       });
-    }, 3000);
+
+      setFacingMode("user");
+    }, 2000);
   };
 
   const handleCreatePost = async () => {
@@ -80,6 +105,12 @@ export const CreatePost = () => {
   return (
     <div className="w-full h-full bg-background">
       <div className="w-full h-full relative grid items-center">
+        {timer !== null && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-50 z-10">
+            <span className="text-6xl font-bold">{timer}</span>
+          </div>
+        )}
+
         <Webcam
           ref={webcamRef}
           mirrored
