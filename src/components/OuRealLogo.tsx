@@ -4,5 +4,5 @@ export const OuRealLogo = () => {
       <img src="/oureal.svg" alt="Oureal" className="x-auto w-36" />
       <small className="opacity-30">Entroido Ourense 2023</small>
     </div>
-  );
-};
+  )
+}

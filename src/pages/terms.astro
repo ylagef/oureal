@@ -1,16 +1,16 @@
 ---
-import { CreatePost } from "../components/CreatePost";
-import { Terms } from "../components/Terms";
-import Layout from "../layouts/Layout.astro";
+import { CreatePost } from '../components/CreatePost'
+import { Terms } from '../components/Terms'
+import Layout from '../layouts/Layout.astro'
 ---
 
 <Layout title="OuReal. - Entroido">
   <script>
-    const termsAccepted = localStorage.getItem("termsAccepted") === "true";
-    const imageTaken = localStorage.getItem("imageTaken") === "true";
+    const termsAccepted = localStorage.getItem('termsAccepted') === 'true'
+    const imageTaken = localStorage.getItem('imageTaken') === 'true'
 
     if (termsAccepted) {
-      window.location.href = imageTaken ? "/feed" : "/new";
+      window.location.href = imageTaken ? '/feed' : '/new'
     }
   </script>
 

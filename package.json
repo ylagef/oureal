@@ -21,6 +21,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-webcam": "^7.0.1",
+    "standard": "^17.0.0",
     "tailwindcss": "^3.0.24"
   }
 }
