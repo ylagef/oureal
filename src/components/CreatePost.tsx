@@ -5,44 +5,75 @@ import { createPost } from "../utils/supabase";
 
 export const CreatePost = () => {
   const webcamRef = useRef(null);
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [imageSrc, setImageSrc] = useState<{
+    user: string | null;
+    environment: string | null;
+  }>({
+    user: null,
+    environment: null,
+  });
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
 
   const handleTake = async () => {
     if (!webcamRef.current) return;
+
     const currentWebcam = webcamRef.current as any;
-    const imageBase64 = currentWebcam.getScreenshot();
-    setImageSrc(imageBase64);
-    localStorage.setItem("imageBase64", imageBase64);
+    const imageBase64User = currentWebcam.getScreenshot();
+
+    setFacingMode("environment");
+
+    setTimeout(() => {
+      const imageBase64Environment = currentWebcam.getScreenshot();
+      localStorage.setItem("imageBase64", imageBase64User);
+      setImageSrc({
+        user: imageBase64User,
+        environment: imageBase64Environment,
+      });
+    }, 3000);
   };
 
-  const create = async () => {
-    if (!imageSrc) return;
+  const handleCreatePost = async () => {
+    if (!imageSrc.user) return;
 
     await createPost({
       name: "test",
       visible: true,
-      file: decode(imageSrc),
+      file: decode(imageSrc.user),
     });
   };
 
   useEffect(() => {
-    setImageSrc(localStorage.getItem("imageBase64"));
+    setImageSrc({
+      user: localStorage.getItem("imageBase64"),
+      environment: null,
+    });
   }, []);
 
-  if (imageSrc)
+  if (imageSrc.user)
     return (
       <>
-        <img src={imageSrc} className=" w-50 h-100 object-cover" />
+        {imageSrc.user && (
+          <img src={imageSrc.user} className=" w-50 h-100 object-cover" />
+        )}
+        {imageSrc.environment && (
+          <img
+            src={imageSrc.environment}
+            className=" w-50 h-100 object-cover"
+          />
+        )}
         <button
           onClick={() => {
-            setImageSrc(null);
+            setImageSrc({
+              user: null,
+              environment: null,
+            });
             localStorage.removeItem("imageBase64");
           }}
         >
           reset
         </button>
 
-        <button onClick={create}>create</button>
+        <button onClick={handleCreatePost}>create</button>
       </>
     );
 
@@ -56,7 +87,7 @@ export const CreatePost = () => {
           className="h-full object-cover"
           screenshotFormat="image/jpeg"
           videoConstraints={{
-            facingMode: "user",
+            facingMode,
           }}
         />
 
