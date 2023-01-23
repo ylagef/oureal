@@ -14,10 +14,10 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
   }, [])
 
   const shareOnSocialMedia = async (post: PostWithSwap) => {
-    // if (!('share' in navigator)) {
-    //   alert('Sharing not supported')
-    //   return
-    // }
+    if (!('share' in navigator)) {
+      alert('Sharing not supported')
+      return
+    }
 
     const postElement = document.getElementById(post.id)
 
@@ -62,22 +62,22 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
       return
     }
 
-    document.body.append(element)
+    const shareHelper = document.getElementById('share-helper')
+    shareHelper?.append(element)
 
     const canvas = await html2canvas(element, {
       backgroundColor: '#151515',
       useCORS: true
     })
 
-    // document.body.prepend(canvas)
-
     canvas.toBlob(async (blob) => {
       if (!blob) return
 
       const files = [new File([blob], 'oureal.png', { type: blob.type })]
-      const shareData = {
+      const shareData: ShareData = {
         text: 'OuReal - Entroido',
         title: 'OuReal - Entroido',
+        url: 'https://oureal.netlify.app',
         files
       }
 
