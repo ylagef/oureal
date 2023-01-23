@@ -23,16 +23,18 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
       alert('Element not found')
       return
     }
-    const canvas = await html2canvas(element)
+    const canvas = await html2canvas(element, {
+      imageTimeout: 10
+    })
     canvas.toBlob(async (blob) => {
       if (!blob) return
 
       // Even if you want to share just one file you need to
       // send them as an array of files.
-      const files = [new File([blob], 'image.png', { type: blob.type })]
+      const files = [new File([blob], 'oureal.png', { type: blob.type })]
       const shareData = {
-        text: 'Some text',
-        title: 'Some title',
+        text: 'Oureal - Entroido',
+        title: 'Oureal - Entroido',
         files
       }
       if (navigator.canShare(shareData)) {
