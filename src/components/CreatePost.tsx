@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import Webcam from 'react-webcam'
-import { decode } from 'base64-arraybuffer'
 import { createPost } from '../utils/supabase'
 
 interface Images {
@@ -115,7 +114,7 @@ export const CreatePost = () => {
           mirrored
           audio={false}
           className="h-full object-cover"
-          screenshotFormat="image/jpeg"
+          screenshotFormat="image/webp"
           videoConstraints={{
             facingMode
           }}

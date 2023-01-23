@@ -1,4 +1,3 @@
-import { decode } from 'base64-arraybuffer'
 import { createClient } from '@supabase/supabase-js'
 
 export const supabase = createClient(
@@ -35,9 +34,7 @@ export const createPost = async ({
 
   console.log({ data, error })
 
-  if (error || !data[0]) {
-    throw error
-  }
+  if (error || !data[0]) throw error
 
   const post = data[0] as Post
 
@@ -57,24 +54,40 @@ export const uploadPostFile = async ({
   }
 }) => {
   if (!images.user || !images.environment) return
+  console.log('uploading images', { id, images })
 
-  const { data: dataUser, error: errorUser } = await supabase.storage.from('posts').upload(`${id}-user.jpeg`, decode(images.user), {
-    contentType: `image/jpeg`
-  })
+  const { data: dataUser, error: errorUser } = await supabase.storage
+    .from('posts')
+    .upload(`${id}/user.webp`, dataURLtoFile({ base64File: images.user, name: 'user.webp' }), {
+      contentType: `image/webp`
+    })
 
-  if (errorUser) {
-    throw errorUser
-  }
+  if (errorUser) throw errorUser
 
   const { data: dataEnvironment, error: errorEnvironment } = await supabase.storage
     .from('posts')
-    .upload(`${id}-environment.jpeg`, decode(images.environment), {
-      contentType: `image/jpeg`
+    .upload(`${id}/environment.webp`, dataURLtoFile({ base64File: images.environment, name: 'environment.webp' }), {
+      contentType: `image/webp`
     })
 
-  if (errorEnvironment) {
-    throw errorEnvironment
-  }
+  if (errorEnvironment) throw errorEnvironment
 
   return { dataUser, dataEnvironment }
+}
+
+const dataURLtoFile = ({ base64File, name }: { base64File: string; name: string }) => {
+  const arr = base64File.split(',')
+
+  const mime = arr[0].match(/:(.*?);/)
+  if (!mime) throw new Error('Invalid base64 file')
+
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+
+  return new File([u8arr], name, { type: mime[1] })
 }
