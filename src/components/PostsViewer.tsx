@@ -21,37 +21,60 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
 
     const postElement = document.getElementById(post.id)
 
-    // get child element by id
-    const userImg = postElement?.querySelector(`#user-${post.id}`)
-    const environmentImg = postElement?.querySelector(`#environment-${post.id}`)
+    const userImg = postElement?.querySelector(`#user-${post.id}`)?.cloneNode(true) as HTMLImageElement
+    const environmentImg = postElement?.querySelector(`#environment-${post.id}`)?.cloneNode(true) as HTMLImageElement
+    const ourRealLogo = document.getElementById('oureal-logo')?.cloneNode(true) as HTMLDivElement
+
+    console.log({ userImg, environmentImg })
+
     const element = document.createElement('div')
-    element.style.width = '100vw'
-    element.style.height = '100vh'
+    element.style.width = window.innerWidth + 'px'
+    element.style.height = window.innerHeight + 'px'
     element.style.backgroundColor = '#151515'
     element.style.padding = '1rem'
     element.style.position = 'relative'
+    element.style.display = 'flex'
+    element.style.flexDirection = 'column'
+    element.style.justifyContent = 'center'
 
-    element.appendChild(userImg?.cloneNode(true) as Node)
-    element.appendChild(environmentImg?.cloneNode(true) as Node)
+    element.appendChild(ourRealLogo)
 
-    // document.body.appendChild(element)
+    const innerElement = document.createElement('div')
+    innerElement.style.width = '100%'
+    innerElement.style.position = 'relative'
+    innerElement.style.margin = '2rem 0'
+
+    innerElement.appendChild(userImg)
+    innerElement.appendChild(environmentImg)
+
+    element.appendChild(innerElement)
+
+    const hashtag = document.createElement('span')
+    hashtag.innerText = '#OuReal2023'
+    hashtag.style.width = '100%'
+    hashtag.style.textAlign = 'center'
+    hashtag.style.fontSize = '.8em'
+    element.appendChild(hashtag)
 
     if (!element) {
       alert('Element not found')
       return
     }
+
     const canvas = await html2canvas(element, {
       backgroundColor: '#151515',
       useCORS: true
     })
-    document.body.appendChild(canvas)
+
+    // document.body.prepend(canvas)
+
     canvas.toBlob(async (blob) => {
       if (!blob) return
 
       const files = [new File([blob], 'oureal.png', { type: blob.type })]
       const shareData = {
-        text: 'Oureal - Entroido',
-        title: 'Oureal - Entroido',
+        text: 'OuReal - Entroido',
+        title: 'OuReal - Entroido',
         files
       }
 
