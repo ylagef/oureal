@@ -24,7 +24,8 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
       return
     }
     const canvas = await html2canvas(element, {
-      imageTimeout: 10
+      imageTimeout: 2000,
+      backgroundColor: '#151515'
     })
     canvas.toBlob(async (blob) => {
       if (!blob) return
