@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import type { Post } from '../utils/supabase'
+import { deletePost, Post } from '../utils/supabase'
 import html2canvas from 'html2canvas'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
@@ -7,10 +7,13 @@ const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/pub
 type PostWithSwap = Post & { swap: boolean }
 
 export const PostsViewer = ({ posts }: { posts: Post[] }) => {
+  const [myPostId, setMyPostId] = React.useState<string | null>(null)
   const [formattedPosts, setFormattedPosts] = React.useState<PostWithSwap[]>([])
 
   useEffect(() => {
     setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
+    const postId = localStorage.getItem('postId')
+    setMyPostId(postId)
   }, [])
 
   const shareOnSocialMedia = async (post: PostWithSwap) => {
@@ -114,9 +117,16 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
                   minute: '2-digit'
                 }).format(new Date(post.created_at))}
               </span>
+
               <button onClick={() => shareOnSocialMedia(post)}>
                 <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
               </button>
+
+              {myPostId === post.id && (
+                <button onClick={() => deletePost(post.id)}>
+                  <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
+                </button>
+              )}
             </div>
           </div>
 

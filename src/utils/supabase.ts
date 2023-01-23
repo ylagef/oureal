@@ -20,6 +20,21 @@ export const getPosts = async () => {
   return data
 }
 
+export const deletePost = async (id: string) => {
+  console.log('deleting post', id)
+  const { data, error } = await supabase.from('posts').delete().match({ id })
+  console.log({ data, error })
+
+  if (error) throw error
+
+  const { data: dataStorage, error: errorStorage } = await supabase.storage.from('posts').remove([`${id}/user.webp`, `${id}/environment.webp`])
+
+  console.log({ dataStorage, errorStorage })
+  if (errorStorage) throw errorStorage
+
+  return data
+}
+
 export const createPost = async ({
   name,
   visible,

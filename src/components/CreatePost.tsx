@@ -57,11 +57,12 @@ export const CreatePost = () => {
   const handleCreatePost = async () => {
     if (images.user && images.environment) {
       localStorage.setItem('images', JSON.stringify(images))
-      await createPost({
+      const post = await createPost({
         name,
         visible: true,
         images
       })
+      localStorage.setItem('postId', post.id)
 
       window.location.href = '/feed'
     }
