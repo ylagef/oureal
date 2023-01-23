@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react'
 import type { Post } from '../utils/supabase'
 import html2canvas from 'html2canvas'
+import { OuRealLogo } from './OuRealLogo'
+
+const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
 type PostWithSwap = Post & { swap: boolean }
 
@@ -16,22 +19,23 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
       alert('Sharing not supported')
       return
     }
-    // `element` is the HTML element you want to share.
-    // `backgroundColor` is the desired background color.
+
     const element = document.getElementById(post.id)
+
     if (!element) {
       alert('Element not found')
       return
     }
     const canvas = await html2canvas(element, {
-      imageTimeout: 5000,
-      backgroundColor: '#151515'
+      backgroundColor: '#151515',
+      useCORS: true,
+
+      ignoreElements: (el) => el.id === 'share-container'
     })
+    document.body.appendChild(canvas)
     canvas.toBlob(async (blob) => {
       if (!blob) return
 
-      // Even if you want to share just one file you need to
-      // send them as an array of files.
       const files = [new File([blob], 'oureal.png', { type: blob.type })]
       const shareData = {
         text: 'Oureal - Entroido',
@@ -69,10 +73,7 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
           </div>
 
           <div className="relative w-full">
-            <img
-              className="w-full rounded"
-              src={`https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/${post.id}/${post.swap ? 'environment' : 'user'}.webp`}
-            />
+            <img className="w-full rounded" src={`${BASE_URL}${post.id}/${post.swap ? 'environment' : 'user'}.webp`} />
             <img
               onClick={() => {
                 setFormattedPosts((prev) =>
@@ -89,11 +90,13 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
                 )
               }}
               className="absolute w-20 top-2 left-2 rounded border-2 border-black"
-              src={`https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
+              src={`${BASE_URL}${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
             />
           </div>
 
-          <button onClick={() => shareOnSocialMedia(post)}>share</button>
+          <div id="share-container" className="w-full flex items-center">
+            <button onClick={() => shareOnSocialMedia(post)}>share</button>
+          </div>
         </div>
       ))}
 
