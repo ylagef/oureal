@@ -21,7 +21,6 @@ const posts: Post[] = await getPosts()
 
       if (lsImages) {
         const imagesObj = JSON.parse(lsImages) as Images
-        console.log({ imagesObj })
         if (!imagesObj.user || !imagesObj.environment) {
           window.location.href = '/new'
         }
