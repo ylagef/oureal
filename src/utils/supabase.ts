@@ -5,11 +5,19 @@ export const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuanNlZnp5c2FiZXhwemtpcXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzQzMjEyNTYsImV4cCI6MTk4OTg5NzI1Nn0.yaBPDHTqUfirMCOjhRRXp5bqJ6AE3RJCIR6cpS99Qlg'
 )
 
-interface Post {
+export interface Post {
   id: string
   created_at: string
   name: string
   visible: boolean
+}
+
+export const getPosts = async () => {
+  const { data, error } = await supabase.from('posts').select().order('created_at', { ascending: false })
+
+  if (error) throw error
+
+  return data
 }
 
 export const createPost = async ({

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import Webcam from 'react-webcam'
 import { createPost } from '../utils/supabase'
 
-interface Images {
+export interface Images {
   user: string | null
   environment: string | null
 }
@@ -111,7 +111,7 @@ export const CreatePost = () => {
 
         <Webcam
           ref={webcamRef}
-          mirrored
+          mirrored={facingMode === 'user'}
           audio={false}
           className="h-full object-cover"
           screenshotFormat="image/webp"

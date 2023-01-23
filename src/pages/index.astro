@@ -7,14 +7,17 @@ import Layout from '../layouts/Layout.astro'
 
 <Layout title="OuReal. - Entroido">
   <script>
+    import type { Images } from '../components/CreatePost'
+
     const termsAccepted = localStorage.getItem('termsAccepted') === 'true'
 
     if (!termsAccepted) {
       window.location.href = '/terms'
     } else {
-      const imageTaken = localStorage.getItem('imageTaken') === 'true'
-      if (!imageTaken) {
-        window.location.href = '/new'
+      let lsImages = localStorage.getItem('images')
+      if (lsImages) {
+        const imagesObj = JSON.parse(lsImages) as Images
+        window.location.href = !imagesObj.user || !imagesObj.environment ? '/new' : '/feed'
       }
     }
   </script>

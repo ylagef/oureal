@@ -1,18 +1,31 @@
 ---
 import { CreatePost } from '../components/CreatePost'
 import { OuRealLogo } from '../components/OuRealLogo'
+import { PostsViewer } from '../components/PostsViewer'
 import { Terms } from '../components/Terms'
 import Layout from '../layouts/Layout.astro'
+import { getPosts, Post } from '../utils/supabase'
+
+const posts: Post[] = await getPosts()
 ---
 
 <Layout title="OuReal. - Entroido">
   <script>
+    import type { Images } from '../components/CreatePost'
+
     const termsAccepted = localStorage.getItem('termsAccepted') === 'true'
     if (!termsAccepted) {
       window.location.href = '/terms'
     } else {
-      const imageTaken = localStorage.getItem('imageTaken') === 'true'
-      if (!imageTaken) {
+      let lsImages = localStorage.getItem('images')
+
+      if (lsImages) {
+        const imagesObj = JSON.parse(lsImages) as Images
+        console.log({ imagesObj })
+        if (!imagesObj.user || !imagesObj.environment) {
+          window.location.href = '/new'
+        }
+      } else {
         window.location.href = '/new'
       }
     }
@@ -20,5 +33,5 @@ import Layout from '../layouts/Layout.astro'
 
   <OuRealLogo />
 
-  <main>feed</main>
+  <PostsViewer client:idle posts={posts} />
 </Layout>
