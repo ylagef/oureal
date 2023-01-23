@@ -13,13 +13,28 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
     setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
   }, [])
 
-  const shareOnSocialMedia = async (post: Post) => {
-    if (!('share' in navigator)) {
-      alert('Sharing not supported')
-      return
-    }
+  const shareOnSocialMedia = async (post: PostWithSwap) => {
+    // if (!('share' in navigator)) {
+    //   alert('Sharing not supported')
+    //   return
+    // }
 
-    const element = document.getElementById(post.id)
+    const postElement = document.getElementById(post.id)
+
+    // get child element by id
+    const userImg = postElement?.querySelector(`#user-${post.id}`)
+    const environmentImg = postElement?.querySelector(`#environment-${post.id}`)
+    const element = document.createElement('div')
+    element.style.width = '100vw'
+    element.style.height = '100vh'
+    element.style.backgroundColor = '#151515'
+    element.style.padding = '1rem'
+    element.style.position = 'relative'
+
+    element.appendChild(userImg?.cloneNode(true) as Node)
+    element.appendChild(environmentImg?.cloneNode(true) as Node)
+
+    // document.body.appendChild(element)
 
     if (!element) {
       alert('Element not found')
@@ -27,9 +42,7 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
     }
     const canvas = await html2canvas(element, {
       backgroundColor: '#151515',
-      useCORS: true,
-
-      ignoreElements: (el) => el.id === 'share-container'
+      useCORS: true
     })
     document.body.appendChild(canvas)
     canvas.toBlob(async (blob) => {
@@ -84,6 +97,7 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
               loading="lazy"
               width={1000}
               height={200}
+              id={`${post.swap ? 'environment' : 'user'}-${post.id}`}
             />
             <img
               onClick={() => {
@@ -102,6 +116,7 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
               }}
               className="absolute top-2 left-2 rounded"
               src={`${BASE_URL}${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
+              id={`${!post.swap ? 'environment' : 'user'}-${post.id}`}
               loading="lazy"
               width={100}
               height={200}
