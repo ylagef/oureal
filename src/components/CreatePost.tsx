@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Webcam from 'react-webcam'
 import { createPost } from '../utils/supabase'
+import { OuRealLogo } from './OuRealLogo'
 
 export interface Images {
   user: string | null
@@ -15,6 +16,7 @@ export const CreatePost = () => {
     environment: null
   })
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user')
+  const [name, setName] = useState('')
 
   const showTimer = async (value: number) => {
     return new Promise((resolve) => {
@@ -22,16 +24,13 @@ export const CreatePost = () => {
 
       const interval = setInterval(() => {
         setTimer((prev) => {
-          if (prev === null) {
-            clearInterval(interval)
-            resolve(null)
-          }
-
           if (prev !== null && prev > 1) {
             return prev - 1
+          } else {
+            clearInterval(interval)
+            resolve(null)
+            return null
           }
-
-          return null
         })
       }, 1000)
     })
@@ -47,25 +46,29 @@ export const CreatePost = () => {
     await showTimer(3)
 
     const imageBase64Environment = currentWebcam.getScreenshot()
-    const imagesObj: Images = {
+
+    setImages({
       user: imageBase64User,
       environment: imageBase64Environment
-    }
-
-    setImages(imagesObj)
-    localStorage.setItem('images', JSON.stringify(imagesObj))
-
+    })
     setFacingMode('user')
   }
 
   const handleCreatePost = async () => {
     if (images.user && images.environment) {
+      localStorage.setItem('images', JSON.stringify(images))
       await createPost({
-        name: 'test',
+        name,
         visible: true,
         images
       })
+
+      window.location.href = '/feed'
     }
+  }
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
   }
 
   useEffect(() => {
@@ -78,24 +81,45 @@ export const CreatePost = () => {
 
   if (images.user && images.environment) {
     return (
-      <div className="relative">
-        {images.user && <img src={images.user} className="w-full object-cover" />}
+      <div className="flex flex-col gap-4 items-center p-2">
+        <OuRealLogo />
 
-        {images.environment && <img src={images.environment} className="absolute top-0 left-0 w-14 object-cover" />}
+        <div className="relative">
+          {images.user && <img src={images.user} className="w-full object-cover rounded" />}
 
-        <button
-          onClick={() => {
-            setImages({
-              user: null,
-              environment: null
-            })
-            localStorage.removeItem('images')
-          }}
-        >
-          reset
-        </button>
+          {images.environment && <img src={images.environment} className="absolute top-2 left-2 rounded w-20 object-cover" />}
+        </div>
 
-        <button onClick={handleCreatePost}>create</button>
+        <input
+          className="w-48 max-w-full bg-transparent border border-white rounded py-2 px-4 text-center"
+          maxLength={10}
+          placeholder="Tu nombre"
+          value={name}
+          onChange={handleNameChange}
+        />
+
+        <div className="flex flex-col gap-2 items-center">
+          <button
+            className="bg-white py-2 px-4 font-bold text-black text-xl rounded-xl tracking-wide disabled:opacity-50"
+            onClick={handleCreatePost}
+            disabled={!name || name === ''}
+          >
+            CREAR
+          </button>
+
+          <button
+            className="text-xs underline"
+            onClick={() => {
+              setImages({
+                user: null,
+                environment: null
+              })
+              localStorage.removeItem('images')
+            }}
+          >
+            Volver a intentar
+          </button>
+        </div>
       </div>
     )
   }
@@ -111,8 +135,8 @@ export const CreatePost = () => {
 
         <Webcam
           ref={webcamRef}
-          mirrored={facingMode === 'user'}
           audio={false}
+          mirrored={facingMode === 'user'}
           className="h-full object-cover"
           screenshotFormat="image/webp"
           videoConstraints={{
@@ -120,13 +144,15 @@ export const CreatePost = () => {
           }}
         />
 
-        <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
-          <svg width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="#151515" fill="none" strokeLinecap="round" strokeLinejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
-            <circle cx="12" cy="13" r="3" />
-          </svg>
-        </button>
+        {timer === null && (
+          <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="#151515" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+              <circle cx="12" cy="13" r="3" />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   )

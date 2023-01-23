@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import type { Post } from '../utils/supabase'
+import html2canvas from 'html2canvas'
 
 type PostWithSwap = Post & { swap: boolean }
 
@@ -10,11 +11,49 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
     setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
   }, [])
 
+  const shareOnSocialMedia = async (post: Post) => {
+    if (!('share' in navigator)) {
+      alert('Sharing not supported')
+      return
+    }
+    // `element` is the HTML element you want to share.
+    // `backgroundColor` is the desired background color.
+    const element = document.getElementById(post.id)
+    if (!element) {
+      alert('Element not found')
+      return
+    }
+    const canvas = await html2canvas(element)
+    canvas.toBlob(async (blob) => {
+      if (!blob) return
+
+      // Even if you want to share just one file you need to
+      // send them as an array of files.
+      const files = [new File([blob], 'image.png', { type: blob.type })]
+      const shareData = {
+        text: 'Some text',
+        title: 'Some title',
+        files
+      }
+      if (navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData)
+        } catch (err) {
+          alert('Sharing failed')
+          console.error(err)
+        }
+      } else {
+        alert('Sharing not supported')
+        console.warn('Sharing not supported', shareData)
+      }
+    })
+  }
+
   return (
     <div className="flex grow flex-col gap-4 overflow-y-auto">
       {formattedPosts.map((post) => (
-        <div className="w-full flex flex-col p-2 gap-2" key={post.id}>
-          <div className="flex justify-between items-baseline px-2">
+        <div className="w-full flex flex-col p-2 gap-2" key={post.id} id={post.id}>
+          <div className="flex justify-between items-center px-2 gap-2">
             <span className="font-bold">{post.name}</span>
             <span className="opacity-50 text-xs">
               {new Intl.DateTimeFormat('es-ES', {
@@ -50,6 +89,8 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
               src={`https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
             />
           </div>
+
+          <button onClick={() => shareOnSocialMedia(post)}>share</button>
         </div>
       ))}
 
