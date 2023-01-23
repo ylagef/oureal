@@ -28,6 +28,7 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
     console.log({ userImg, environmentImg })
 
     const element = document.createElement('div')
+    element.id = 'oureal-share-aux'
     element.style.width = window.innerWidth + 'px'
     element.style.height = window.innerHeight + 'px'
     element.style.backgroundColor = '#151515'
@@ -61,6 +62,8 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
       return
     }
 
+    document.body.append(element)
+
     const canvas = await html2canvas(element, {
       backgroundColor: '#151515',
       useCORS: true
@@ -89,7 +92,11 @@ export const PostsViewer = ({ posts }: { posts: Post[] }) => {
         alert('Sharing not supported')
         console.warn('Sharing not supported', shareData)
       }
+
+      element?.remove()
     })
+
+    element?.remove()
   }
 
   return (
