@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { deletePost, getPosts, Post } from '../utils/supabase'
 import html2canvas from 'html2canvas'
+import { OuRealLogo } from './OuRealLogo'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
@@ -106,7 +107,11 @@ export const PostsViewer = () => {
   }
 
   return (
-    <div className="flex grow flex-col gap-4 overflow-y-auto">
+    <div className="flex grow flex-col gap-4 overflow-y-auto scrollbar-hide">
+      <div className="sticky top-0 z-10">
+        <OuRealLogo />
+      </div>
+
       {formattedPosts.map((post) => (
         <div key={post.id} className="relative">
           {confirmDelete === post.id && (
