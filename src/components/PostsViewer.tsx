@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { deletePost, getPosts, Post } from '../utils/supabase'
 import html2canvas from 'html2canvas'
 
@@ -7,8 +7,9 @@ const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/pub
 type PostWithSwap = Post & { swap: boolean }
 
 export const PostsViewer = () => {
-  const [myPostId, setMyPostId] = React.useState<string | null>(null)
-  const [formattedPosts, setFormattedPosts] = React.useState<PostWithSwap[]>([])
+  const [myPostId, setMyPostId] = useState<string | null>(null)
+  const [formattedPosts, setFormattedPosts] = useState<PostWithSwap[]>([])
+  const [confirmDelete, setConfirmDelete] = useState<string | null>()
 
   useEffect(() => {
     setMyPostId(localStorage.getItem('postId'))
@@ -107,62 +108,86 @@ export const PostsViewer = () => {
   return (
     <div className="flex grow flex-col gap-4 overflow-y-auto">
       {formattedPosts.map((post) => (
-        <div className="w-full flex flex-col p-2 gap-2" key={post.id} id={post.id}>
-          <div className="flex justify-between items-center px-2 gap-2">
-            <span className="font-bold">{post.name}</span>
-            <div className="flex gap-2 items-center">
-              <span className="opacity-50 text-xs">
-                {new Intl.DateTimeFormat('es-ES', {
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                }).format(new Date(post.created_at))}
-              </span>
-
-              <button onClick={() => shareOnSocialMedia(post)}>
-                <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
+        <div key={post.id} className="relative">
+          {confirmDelete === post.id && (
+            <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
+              <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
+              <button
+                className="font-bold bg-red-500 py-2 px-4 rounded"
+                onClick={async () => {
+                  await deletePost(post.id)
+                  window.location.href = '/new'
+                }}
+              >
+                Confirmar
               </button>
-
-              {myPostId === post.id && (
-                <button onClick={() => deletePost(post.id)}>
-                  <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
-                </button>
-              )}
+              <button
+                className="text-xs"
+                onClick={() => {
+                  setConfirmDelete(null)
+                }}
+              >
+                Cancelar
+              </button>
             </div>
-          </div>
+          )}
+          <div className={`w-full flex flex-col p-2 gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
+            <div className="flex justify-between items-center px-2 gap-2">
+              <span className="font-bold">{post.name}</span>
+              <div className="flex gap-2 items-center">
+                <span className="opacity-50 text-xs">
+                  {new Intl.DateTimeFormat('es-ES', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }).format(new Date(post.created_at))}
+                </span>
 
-          <div className="relative w-full">
-            <img
-              className="rounded"
-              src={`${BASE_URL}${post.id}/${post.swap ? 'environment' : 'user'}.webp`}
-              loading="lazy"
-              width={1000}
-              height={200}
-              id={`${post.swap ? 'environment' : 'user'}-${post.id}`}
-            />
-            <img
-              onClick={() => {
-                setFormattedPosts((prev) =>
-                  prev.map((p) => {
-                    if (p.id === post.id) {
-                      return {
-                        ...p,
-                        swap: !p.swap
+                <button onClick={() => shareOnSocialMedia(post)}>
+                  <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
+                </button>
+
+                {myPostId === post.id && (
+                  <button onClick={() => setConfirmDelete(post.id)}>
+                    <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="relative w-full">
+              <img
+                className="rounded"
+                src={`${BASE_URL}${post.id}/${post.swap ? 'environment' : 'user'}.webp`}
+                loading="lazy"
+                width={1000}
+                height={200}
+                id={`${post.swap ? 'environment' : 'user'}-${post.id}`}
+              />
+              <img
+                onClick={() => {
+                  setFormattedPosts((prev) =>
+                    prev.map((p) => {
+                      if (p.id === post.id) {
+                        return {
+                          ...p,
+                          swap: !p.swap
+                        }
                       }
-                    }
 
-                    return p
-                  })
-                )
-              }}
-              className="absolute top-2 left-2 rounded"
-              src={`${BASE_URL}${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
-              id={`${!post.swap ? 'environment' : 'user'}-${post.id}`}
-              loading="lazy"
-              width={100}
-              height={200}
-            />
+                      return p
+                    })
+                  )
+                }}
+                className="absolute top-2 left-2 rounded"
+                src={`${BASE_URL}${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
+                id={`${!post.swap ? 'environment' : 'user'}-${post.id}`}
+                loading="lazy"
+                width={100}
+                height={200}
+              />
+            </div>
           </div>
         </div>
       ))}
