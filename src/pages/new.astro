@@ -12,13 +12,8 @@ import Layout from '../layouts/Layout.astro'
     if (!termsAccepted) {
       window.location.href = '/terms'
     } else {
-      let lsImages = localStorage.getItem('images')
-      if (lsImages) {
-        const imagesObj = JSON.parse(lsImages) as Images
-        if (imagesObj.user && imagesObj.environment) {
-          window.location.href = '/feed'
-        }
-      }
+      const lsPostId = localStorage.getItem('postId')
+      if (lsPostId) window.location.href = '/feed'
     }
   </script>
 

@@ -9,22 +9,12 @@ import { getPosts, Post } from '../utils/supabase'
 
 <Layout title="OuReal. - Entroido">
   <script>
-    import type { Images } from '../components/CreatePost'
-
     const termsAccepted = localStorage.getItem('termsAccepted') === 'true'
     if (!termsAccepted) {
       window.location.href = '/terms'
     } else {
-      let lsImages = localStorage.getItem('images')
-
-      if (lsImages) {
-        const imagesObj = JSON.parse(lsImages) as Images
-        if (!imagesObj.user || !imagesObj.environment) {
-          window.location.href = '/new'
-        }
-      } else {
-        window.location.href = '/new'
-      }
+      const lsPostId = localStorage.getItem('postId')
+      if (!lsPostId) window.location.href = '/new'
     }
   </script>
 

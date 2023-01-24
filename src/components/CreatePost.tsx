@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Webcam from 'react-webcam'
 import { createPost } from '../utils/supabase'
+import { ImagesLayout } from './ImagesLayout'
 import { OuRealLogo } from './OuRealLogo'
 
 export interface Images {
@@ -63,12 +64,11 @@ export const CreatePost = () => {
   }
 
   useEffect(() => {
-    console.log(images)
+    if (images.user && images.environment) localStorage.setItem('images', JSON.stringify(images))
   }, [images])
 
   const handleCreatePost = async () => {
     if (images.user && images.environment) {
-      localStorage.setItem('images', JSON.stringify(images))
       const post = await createPost({
         name,
         visible: true,
@@ -97,10 +97,7 @@ export const CreatePost = () => {
       <div className="flex flex-col gap-6 items-center p-2">
         <OuRealLogo />
 
-        <div className="relative">
-          {images.user && <img src={images.user} className="w-full object-cover rounded" />}
-          {images.environment && <img src={images.environment} className="absolute top-2 left-2 rounded w-20 object-cover" />}
-        </div>
+        <ImagesLayout id="test" images={[images.user, images.environment]} />
 
         <input
           className="w-full bg-transparent border border-brdr rounded py-2 px-4 text-center"

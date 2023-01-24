@@ -6,16 +6,10 @@ import Layout from '../layouts/Layout.astro'
 
 <Layout title="OuReal. - Entroido">
   <script>
-    import type { Images } from '../components/CreatePost'
-
     const termsAccepted = localStorage.getItem('termsAccepted') === 'true'
+    const lsPostId = localStorage.getItem('postId')
 
-    let lsImages = localStorage.getItem('images')
-    const imagesObj = lsImages ? (JSON.parse(lsImages) as Images) : { user: null, environment: null }
-
-    if (termsAccepted) {
-      window.location.href = imagesObj.user && imagesObj.environment ? '/feed' : '/new'
-    }
+    if (termsAccepted) window.location.href = lsPostId ? '/feed' : '/new'
   </script>
 
   <Terms client:load />

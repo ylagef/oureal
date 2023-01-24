@@ -7,16 +7,14 @@ import { ImagesLayout } from './ImagesLayout'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
-export type PostWithSwap = Post & { swap: boolean }
-
 export const PostsViewer = () => {
   const [superAdmin, setSuperAdmin] = useState<boolean>(false)
 
   const [myPostId, setMyPostId] = useState<string | null>(null)
-  const [formattedPosts, setFormattedPosts] = useState<PostWithSwap[]>([])
+  const [formattedPosts, setFormattedPosts] = useState<Post[]>([])
   const [confirmDelete, setConfirmDelete] = useState<string | null>()
 
-  const shareOnSocialMedia = async (post: PostWithSwap) => {
+  const shareOnSocialMedia = async (post: Post) => {
     if (!('share' in navigator)) {
       alert('Sharing not supported')
       return
@@ -113,21 +111,6 @@ export const PostsViewer = () => {
     }
   }
 
-  const handleSwap = (post: PostWithSwap) => {
-    setFormattedPosts((prev) =>
-      prev.map((p) => {
-        if (p.id === post.id) {
-          return {
-            ...p,
-            swap: !p.swap
-          }
-        }
-
-        return p
-      })
-    )
-  }
-
   useEffect(() => {
     setMyPostId(localStorage.getItem('postId'))
 
@@ -178,7 +161,7 @@ export const PostsViewer = () => {
                 </div>
               </div>
 
-              <ImagesLayout post={post} handleSwap={handleSwap} />
+              <ImagesLayout id={post.id} images={[`${BASE_URL}${post.id}/user.webp`, `${BASE_URL}${post.id}/environment.webp`]} />
             </div>
 
             {confirmDelete === post.id && (
