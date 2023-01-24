@@ -82,7 +82,7 @@ export const CreatePost = () => {
 
   if (images.user && images.environment) {
     return (
-      <div className="flex flex-col gap-4 items-center p-2">
+      <div className="flex flex-col gap-6 items-center p-2">
         <OuRealLogo />
 
         <div className="relative">
@@ -99,7 +99,7 @@ export const CreatePost = () => {
           onChange={handleNameChange}
         />
 
-        <div className="flex flex-col gap-2 items-center">
+        <div className="flex flex-col gap-2 items-center py-2">
           <button
             className="bg-white py-2 px-4 font-bold text-black text-xl rounded-full tracking-wide disabled:opacity-50"
             onClick={handleCreatePost}

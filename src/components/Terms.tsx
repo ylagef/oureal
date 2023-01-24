@@ -25,8 +25,8 @@ export const Terms = () => {
 
         <div className="py-6 flex gap-4 flex-col">
           <p className="max-w-[60ch] text-justify mx-auto text-sm">
-            Pulsando en "Aceptar y empezar" aceptas que tu imagen sea utilizada para fines no comerciales, siendo publicadas en esta web y visible por
-            cualquier persona que acceda a la misma.
+            Pulsando en "Aceptar y empezar" aceptas que tu imagen sea utilizada para fines no comerciales, siendo publicadas las fotos tomadas en esta
+            web y visibles por cualquier persona que acceda a la misma.
           </p>
           <p className="max-w-[60ch] text-justify mx-auto text-sm">
             OuReal o su creador no se responsabiliza de la utilización que se haga de las imágenes publicadas en esta web. Si no estás de acuerdo, no

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { deletePost, getPosts, Post } from '../utils/supabase'
+import { deletePost, getPosts, Post, supabase } from '../utils/supabase'
 import html2canvas from 'html2canvas'
 import { OuRealLogo } from './OuRealLogo'
 
@@ -8,17 +8,11 @@ const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/pub
 type PostWithSwap = Post & { swap: boolean }
 
 export const PostsViewer = () => {
+  const [superAdmin, setSuperAdmin] = useState<boolean>(false)
+
   const [myPostId, setMyPostId] = useState<string | null>(null)
   const [formattedPosts, setFormattedPosts] = useState<PostWithSwap[]>([])
   const [confirmDelete, setConfirmDelete] = useState<string | null>()
-
-  useEffect(() => {
-    setMyPostId(localStorage.getItem('postId'))
-    ;(async () => {
-      const posts: Post[] = await getPosts()
-      setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
-    })()
-  }, [])
 
   const shareOnSocialMedia = async (post: PostWithSwap) => {
     if (!('share' in navigator)) {
@@ -106,39 +100,43 @@ export const PostsViewer = () => {
     element?.remove()
   }
 
+  const handleDeletePost = (id: string) => async () => {
+    await deletePost(id)
+    if (id === myPostId) {
+      localStorage.removeItem('postId')
+      localStorage.removeItem('images')
+      window.location.href = '/new'
+    } else {
+      window.location.reload()
+    }
+  }
+
+  useEffect(() => {
+    setMyPostId(localStorage.getItem('postId'))
+
+    getPosts().then((posts) => {
+      setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
+    })
+
+    supabase.auth.getSession().then(({ data, error }) => {
+      console.log({ data, error })
+      setSuperAdmin(data?.session !== null)
+    })
+  }, [])
   return (
     <div className="flex grow flex-col gap-4 overflow-y-auto scrollbar-hide">
-      <div className="sticky top-0 z-10">
+      <div className="sticky top-0 z-10 p-2">
         <OuRealLogo />
       </div>
 
       {formattedPosts.map((post) => (
         <div key={post.id} className="relative">
-          {confirmDelete === post.id && (
-            <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
-              <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
-              <button
-                className="font-bold bg-red-500 py-2 px-4 rounded-full"
-                onClick={async () => {
-                  await deletePost(post.id)
-                  window.location.href = '/new'
-                }}
-              >
-                Confirmar
-              </button>
-              <button
-                className="text-xs"
-                onClick={() => {
-                  setConfirmDelete(null)
-                }}
-              >
-                Cancelar
-              </button>
-            </div>
-          )}
           <div className={`w-full flex flex-col p-2 gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
             <div className="flex justify-between items-center px-2 gap-2">
-              <span className="font-bold">{post.name}</span>
+              <div className="flex gap-2 items-center">
+                <img src="/user.svg" alt="User" className="w-5 border rounded-full" />
+                <span className="font-bold">{post.name}</span>
+              </div>
               <div className="flex gap-2 items-center">
                 <span className="opacity-50 text-xs">
                   {new Intl.DateTimeFormat('es-ES', {
@@ -153,7 +151,7 @@ export const PostsViewer = () => {
                   <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
                 </button>
 
-                {myPostId === post.id && (
+                {(superAdmin || myPostId === post.id) && (
                   <button onClick={() => setConfirmDelete(post.id)}>
                     <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
                   </button>
@@ -194,6 +192,23 @@ export const PostsViewer = () => {
               />
             </div>
           </div>
+
+          {confirmDelete === post.id && (
+            <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
+              <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
+              <button className="font-bold bg-red-500 py-2 px-4 rounded-full" onClick={handleDeletePost(post.id)}>
+                Confirmar
+              </button>
+              <button
+                className="text-xs"
+                onClick={() => {
+                  setConfirmDelete(null)
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          )}
         </div>
       ))}
 
