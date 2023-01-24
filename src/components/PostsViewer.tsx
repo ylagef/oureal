@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { deletePost, getPosts, Post, supabase } from '../utils/supabase'
 import html2canvas from 'html2canvas'
 import { OuRealLogo } from './OuRealLogo'
+import Draggable from 'react-draggable'
+import { ImagesLayout } from './ImagesLayout'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
-type PostWithSwap = Post & { swap: boolean }
+export type PostWithSwap = Post & { swap: boolean }
 
 export const PostsViewer = () => {
   const [superAdmin, setSuperAdmin] = useState<boolean>(false)
@@ -111,6 +113,21 @@ export const PostsViewer = () => {
     }
   }
 
+  const handleSwap = (post: PostWithSwap) => {
+    setFormattedPosts((prev) =>
+      prev.map((p) => {
+        if (p.id === post.id) {
+          return {
+            ...p,
+            swap: !p.swap
+          }
+        }
+
+        return p
+      })
+    )
+  }
+
   useEffect(() => {
     setMyPostId(localStorage.getItem('postId'))
 
@@ -123,6 +140,7 @@ export const PostsViewer = () => {
       setSuperAdmin(data?.session !== null)
     })
   }, [])
+
   return (
     <div className="flex grow flex-col gap-4 overflow-y-auto scrollbar-hide">
       <div className="sticky top-0 z-10 p-2">
@@ -160,38 +178,7 @@ export const PostsViewer = () => {
                 </div>
               </div>
 
-              <div className="relative w-full">
-                <img
-                  className="rounded"
-                  src={`${BASE_URL}${post.id}/${post.swap ? 'environment' : 'user'}.webp`}
-                  loading="lazy"
-                  width={1000}
-                  height={200}
-                  id={`${post.swap ? 'environment' : 'user'}-${post.id}`}
-                />
-                <img
-                  onClick={() => {
-                    setFormattedPosts((prev) =>
-                      prev.map((p) => {
-                        if (p.id === post.id) {
-                          return {
-                            ...p,
-                            swap: !p.swap
-                          }
-                        }
-
-                        return p
-                      })
-                    )
-                  }}
-                  className="absolute top-2 left-2 rounded"
-                  src={`${BASE_URL}${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
-                  id={`${!post.swap ? 'environment' : 'user'}-${post.id}`}
-                  loading="lazy"
-                  width={100}
-                  height={200}
-                />
-              </div>
+              <ImagesLayout post={post} handleSwap={handleSwap} />
             </div>
 
             {confirmDelete === post.id && (
