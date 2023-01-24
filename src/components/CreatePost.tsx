@@ -101,7 +101,7 @@ export const CreatePost = () => {
 
         <div className="flex flex-col gap-2 items-center">
           <button
-            className="bg-white py-2 px-4 font-bold text-black text-xl rounded-xl tracking-wide disabled:opacity-50"
+            className="bg-white py-2 px-4 font-bold text-black text-xl rounded-full tracking-wide disabled:opacity-50"
             onClick={handleCreatePost}
             disabled={!name || name === ''}
           >

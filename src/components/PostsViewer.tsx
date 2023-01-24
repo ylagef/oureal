@@ -118,7 +118,7 @@ export const PostsViewer = () => {
             <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
               <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
               <button
-                className="font-bold bg-red-500 py-2 px-4 rounded"
+                className="font-bold bg-red-500 py-2 px-4 rounded-full"
                 onClick={async () => {
                   await deletePost(post.id)
                   window.location.href = '/new'
