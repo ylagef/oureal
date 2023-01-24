@@ -129,88 +129,90 @@ export const PostsViewer = () => {
         <OuRealLogo />
       </div>
 
-      {formattedPosts.map((post) => (
-        <div key={post.id} className="relative">
-          <div className={`w-full flex flex-col p-2 gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
-            <div className="flex justify-between items-center px-2 gap-2">
-              <div className="flex gap-2 items-center">
-                <img src="/user.svg" alt="User" className="w-5 border rounded-full" />
-                <span className="font-bold">{post.name}</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <span className="opacity-50 text-xs">
-                  {new Intl.DateTimeFormat('es-ES', {
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  }).format(new Date(post.created_at))}
-                </span>
+      <div className="flex flex-col gap-8">
+        {formattedPosts.map((post) => (
+          <div key={post.id} className="relative">
+            <div className={`w-full flex flex-col px-2 gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
+              <div className="flex justify-between items-center px-2 gap-2">
+                <div className="flex gap-2 items-center">
+                  <img src="/user.svg" alt="User" className="w-5 border rounded-full" />
+                  <span className="font-bold">{post.name}</span>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <span className="opacity-50 text-xs">
+                    {new Intl.DateTimeFormat('es-ES', {
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }).format(new Date(post.created_at))}
+                  </span>
 
-                <button onClick={() => shareOnSocialMedia(post)}>
-                  <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
-                </button>
-
-                {(superAdmin || myPostId === post.id) && (
-                  <button onClick={() => setConfirmDelete(post.id)}>
-                    <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
+                  <button onClick={() => shareOnSocialMedia(post)}>
+                    <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
                   </button>
-                )}
+
+                  {(superAdmin || myPostId === post.id) && (
+                    <button onClick={() => setConfirmDelete(post.id)}>
+                      <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="relative w-full">
+                <img
+                  className="rounded"
+                  src={`${BASE_URL}${post.id}/${post.swap ? 'environment' : 'user'}.webp`}
+                  loading="lazy"
+                  width={1000}
+                  height={200}
+                  id={`${post.swap ? 'environment' : 'user'}-${post.id}`}
+                />
+                <img
+                  onClick={() => {
+                    setFormattedPosts((prev) =>
+                      prev.map((p) => {
+                        if (p.id === post.id) {
+                          return {
+                            ...p,
+                            swap: !p.swap
+                          }
+                        }
+
+                        return p
+                      })
+                    )
+                  }}
+                  className="absolute top-2 left-2 rounded"
+                  src={`${BASE_URL}${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
+                  id={`${!post.swap ? 'environment' : 'user'}-${post.id}`}
+                  loading="lazy"
+                  width={100}
+                  height={200}
+                />
               </div>
             </div>
 
-            <div className="relative w-full">
-              <img
-                className="rounded"
-                src={`${BASE_URL}${post.id}/${post.swap ? 'environment' : 'user'}.webp`}
-                loading="lazy"
-                width={1000}
-                height={200}
-                id={`${post.swap ? 'environment' : 'user'}-${post.id}`}
-              />
-              <img
-                onClick={() => {
-                  setFormattedPosts((prev) =>
-                    prev.map((p) => {
-                      if (p.id === post.id) {
-                        return {
-                          ...p,
-                          swap: !p.swap
-                        }
-                      }
-
-                      return p
-                    })
-                  )
-                }}
-                className="absolute top-2 left-2 rounded"
-                src={`${BASE_URL}${post.id}/${!post.swap ? 'environment' : 'user'}.webp`}
-                id={`${!post.swap ? 'environment' : 'user'}-${post.id}`}
-                loading="lazy"
-                width={100}
-                height={200}
-              />
-            </div>
+            {confirmDelete === post.id && (
+              <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
+                <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
+                <button className="font-bold bg-red-500 py-2 px-4 rounded-full" onClick={handleDeletePost(post.id)}>
+                  Confirmar
+                </button>
+                <button
+                  className="text-xs"
+                  onClick={() => {
+                    setConfirmDelete(null)
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
           </div>
-
-          {confirmDelete === post.id && (
-            <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
-              <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
-              <button className="font-bold bg-red-500 py-2 px-4 rounded-full" onClick={handleDeletePost(post.id)}>
-                Confirmar
-              </button>
-              <button
-                className="text-xs"
-                onClick={() => {
-                  setConfirmDelete(null)
-                }}
-              >
-                Cancelar
-              </button>
-            </div>
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
 
       <span className="mt-2 mb-6 text-center opacity-50 text-xs">No hay más posts... Por ahora.</span>
     </div>

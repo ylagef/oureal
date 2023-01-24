@@ -9,7 +9,7 @@ export interface Images {
 }
 
 export const CreatePost = () => {
-  const webcamRef = useRef(null)
+  const webcamRef = useRef<Webcam>(null)
   const [timer, setTimer] = useState<number | null>(null)
   const [images, setImages] = useState<Images>({
     user: null,
@@ -17,6 +17,10 @@ export const CreatePost = () => {
   })
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user')
   const [name, setName] = useState('')
+
+  const swapFacingMode = () => {
+    setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'))
+  }
 
   const showTimer = async (value: number) => {
     return new Promise((resolve) => {
@@ -37,22 +41,30 @@ export const CreatePost = () => {
   }
 
   const handleTake = async () => {
-    if (!webcamRef.current) return
-    await showTimer(3)
-    const currentWebcam = webcamRef.current as any
-    const imageBase64User = currentWebcam.getScreenshot()
+    const currentWebcam = webcamRef.current
+    if (!currentWebcam) return
 
-    setFacingMode('environment')
     await showTimer(3)
 
-    const imageBase64Environment = currentWebcam.getScreenshot()
+    setImages((prev) => ({
+      ...prev,
+      [facingMode]: currentWebcam.getScreenshot()
+    }))
 
-    setImages({
-      user: imageBase64User,
-      environment: imageBase64Environment
-    })
+    swapFacingMode()
+    await showTimer(3)
+
+    setImages((prev) => ({
+      ...prev,
+      [facingMode === 'user' ? 'environment' : 'user']: currentWebcam.getScreenshot()
+    }))
+
     setFacingMode('user')
   }
+
+  useEffect(() => {
+    console.log(images)
+  }, [images])
 
   const handleCreatePost = async () => {
     if (images.user && images.environment) {
@@ -87,19 +99,18 @@ export const CreatePost = () => {
 
         <div className="relative">
           {images.user && <img src={images.user} className="w-full object-cover rounded" />}
-
           {images.environment && <img src={images.environment} className="absolute top-2 left-2 rounded w-20 object-cover" />}
         </div>
 
         <input
-          className="w-48 max-w-full bg-transparent border border-white rounded py-2 px-4 text-center"
+          className="w-full bg-transparent border border-brdr rounded py-2 px-4 text-center"
           maxLength={10}
           placeholder="Tu nombre"
           value={name}
           onChange={handleNameChange}
         />
 
-        <div className="flex flex-col gap-2 items-center py-2">
+        <div className="flex flex-col gap-2 items-center w-full">
           <button
             className="bg-white py-2 px-4 font-bold text-black text-xl rounded-full tracking-wide disabled:opacity-50"
             onClick={handleCreatePost}
@@ -118,7 +129,7 @@ export const CreatePost = () => {
               localStorage.removeItem('images')
             }}
           >
-            Volver a intentar
+            Volver a intentarlo
           </button>
         </div>
       </div>
@@ -126,7 +137,7 @@ export const CreatePost = () => {
   }
 
   return (
-    <div className="w-full h-full bg-background">
+    <div className="w-full h-full bg-bckg">
       <div className="w-full h-full relative grid items-center">
         {timer !== null && (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-50 z-10">
@@ -146,13 +157,15 @@ export const CreatePost = () => {
         />
 
         {timer === null && (
-          <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
-            <svg width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="#151515" fill="none" strokeLinecap="round" strokeLinejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
-              <circle cx="12" cy="13" r="3" />
-            </svg>
-          </button>
+          <>
+            <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
+              <img src="/camera.svg" className="w-6 h-6" />
+            </button>
+
+            <button onClick={swapFacingMode} className="absolute bottom-8 right-8 border opacity-50 rounded-full p-4">
+              <img src="/camera-rotate.svg" className="w-6 h-6" />
+            </button>
+          </>
         )}
       </div>
     </div>
