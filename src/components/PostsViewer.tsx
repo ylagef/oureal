@@ -1,19 +1,22 @@
 import React, { useEffect } from 'react'
-import { deletePost, Post } from '../utils/supabase'
+import { deletePost, getPosts, Post } from '../utils/supabase'
 import html2canvas from 'html2canvas'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
 type PostWithSwap = Post & { swap: boolean }
 
-export const PostsViewer = ({ posts }: { posts: Post[] }) => {
+export const PostsViewer = () => {
   const [myPostId, setMyPostId] = React.useState<string | null>(null)
   const [formattedPosts, setFormattedPosts] = React.useState<PostWithSwap[]>([])
 
   useEffect(() => {
-    setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
-    const postId = localStorage.getItem('postId')
-    setMyPostId(postId)
+    ;(async () => {
+      const posts: Post[] = await getPosts()
+      setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
+      const postId = localStorage.getItem('postId')
+      setMyPostId(postId)
+    })()
   }, [])
 
   const shareOnSocialMedia = async (post: PostWithSwap) => {
