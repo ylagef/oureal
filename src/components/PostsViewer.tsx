@@ -11,11 +11,10 @@ export const PostsViewer = () => {
   const [formattedPosts, setFormattedPosts] = React.useState<PostWithSwap[]>([])
 
   useEffect(() => {
+    setMyPostId(localStorage.getItem('postId'))
     ;(async () => {
       const posts: Post[] = await getPosts()
       setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
-      const postId = localStorage.getItem('postId')
-      setMyPostId(postId)
     })()
   }, [])
 
