@@ -13,6 +13,7 @@ export const CreatePost = () => {
   const userWebcamRef = useRef<Webcam>(null)
   const environmentWebcamRef = useRef<Webcam>(null)
 
+  const [swapped, setSwapped] = useState<boolean>(false)
   const [timer, setTimer] = useState<number | null>(null)
   const [images, setImages] = useState<Images>({
     user: null,
@@ -110,26 +111,27 @@ export const CreatePost = () => {
         )}
 
         <Webcam
-          ref={userWebcamRef}
+          ref={swapped ? userWebcamRef : environmentWebcamRef}
           audio={false}
           className="h-full object-cover"
           screenshotFormat="image/webp"
           minScreenshotWidth={1000}
           videoConstraints={{
-            facingMode: 'user'
+            facingMode: swapped ? 'user' : 'environment'
           }}
         />
 
         <Webcam
-          ref={environmentWebcamRef}
+          ref={swapped ? environmentWebcamRef : userWebcamRef}
           audio={false}
           mirrored
           className="absolute top-2 left-2 w-40 object-cover rounded"
           screenshotFormat="image/webp"
           minScreenshotWidth={1000}
           videoConstraints={{
-            facingMode: 'environment'
+            facingMode: swapped ? 'environment' : 'user'
           }}
+          onClick={() => setSwapped((prev) => !prev)}
         />
 
         {timer === null && (
