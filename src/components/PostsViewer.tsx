@@ -103,6 +103,8 @@ export const PostsViewer = () => {
   }
 
   const handleDeletePost = (id: string) => async () => {
+    setLoading(true)
+
     await deletePost(id)
     if (id === myPostId) {
       localStorage.removeItem('postId')
@@ -137,10 +139,10 @@ export const PostsViewer = () => {
         <Loading />
       ) : (
         <>
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8 px-2">
             {formattedPosts.map((post) => (
               <div key={post.id} className="relative">
-                <div className={`w-full flex flex-col px-2 gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
+                <div className={`w-full flex flex-col gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
                   <div className="flex justify-between items-center px-2 gap-2">
                     <div className="flex gap-2 items-center">
                       <img src="/user.svg" alt="User" className="w-5 border rounded-full" />

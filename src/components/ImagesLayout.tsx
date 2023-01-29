@@ -33,10 +33,11 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
 
             const containerWidth = document.getElementById(`drag-container-${id}`)?.offsetWidth || 1000
             const event = ev as TouchEvent
+            console.log('1', event.changedTouches)
             if (!event.changedTouches) return
             const touch = event.changedTouches[0]
+            console.log('2', touch.clientX > containerWidth / 2 ? 'right' : 'left')
 
-            alert(JSON.stringify({ clientX: touch.clientX, containerWidth: containerWidth }))
             setPosition(touch.clientX > containerWidth / 2 ? 'right' : 'left')
           }
         }}
@@ -45,7 +46,7 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
         }}
       >
         <img
-          className={`absolute top-2 ${position}-2 rounded`}
+          className={`absolute top-2 ${position === 'left' ? 'left-2' : 'right-2'} rounded`}
           src={images[swapped ? 0 : 1]}
           id={`${!swapped ? 'environment' : 'user'}-${id}`}
           loading="lazy"

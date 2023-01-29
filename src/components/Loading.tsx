@@ -6,7 +6,7 @@ export const Loading = () => {
         x="0px"
         y="0px"
         viewBox="0 0 100 50"
-        enable-background="new 0 0 100 50"
+        enableBackground="new 0 0 100 50"
         style={{
           fill: 'white',
           width: '7rem'

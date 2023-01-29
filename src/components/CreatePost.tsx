@@ -3,6 +3,7 @@ import Webcam from 'react-webcam'
 import { createPost } from '../utils/supabase'
 import { ImagesLayout } from './ImagesLayout'
 import { OuRealLogo } from './OuRealLogo'
+import { Loading } from './Loading'
 
 export interface Images {
   user: string | null
@@ -14,12 +15,9 @@ export const CreatePost = () => {
   const environmentWebcamRef = useRef<Webcam>(null)
 
   const [swapped, setSwapped] = useState<boolean>(false)
-  const [timer, setTimer] = useState<number | null>(null)
-  const [images, setImages] = useState<Images>({
-    user: null,
-    environment: null
-  })
+  const [images, setImages] = useState<Images>({ user: null, environment: null })
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleTake = async () => {
     const currentUserWebcam = userWebcamRef.current
@@ -37,6 +35,7 @@ export const CreatePost = () => {
 
   const handleCreatePost = async () => {
     if (images.user && images.environment) {
+      setLoading(true)
       const post = await createPost({
         name,
         visible: true,
@@ -60,10 +59,23 @@ export const CreatePost = () => {
     }
   }, [])
 
+  if (loading) {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="sticky top-0 z-10 p-2 backdrop-blur-sm">
+          <OuRealLogo />
+        </div>
+        <Loading />
+      </div>
+    )
+  }
+
   if (images.user && images.environment) {
     return (
-      <div className="flex flex-col gap-6 items-center p-2">
-        <OuRealLogo />
+      <div className="flex flex-col gap-6 items-center px-2">
+        <div className="sticky top-0 z-10 p-2 backdrop-blur-sm">
+          <OuRealLogo />
+        </div>
 
         <ImagesLayout id="test" images={[images.user, images.environment]} />
 
@@ -104,12 +116,6 @@ export const CreatePost = () => {
   return (
     <div className="w-full h-full bg-bckg">
       <div className="w-full h-full relative grid items-center">
-        {timer !== null && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-50 z-10">
-            <span className="text-6xl font-bold">{timer}</span>
-          </div>
-        )}
-
         <Webcam
           ref={swapped ? userWebcamRef : environmentWebcamRef}
           audio={false}
@@ -134,13 +140,9 @@ export const CreatePost = () => {
           onClick={() => setSwapped((prev) => !prev)}
         />
 
-        {timer === null && (
-          <>
-            <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
-              <img src="/camera.svg" className="w-6 h-6" />
-            </button>
-          </>
-        )}
+        <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
+          <img src="/camera.svg" className="w-6 h-6" />
+        </button>
       </div>
     </div>
   )
