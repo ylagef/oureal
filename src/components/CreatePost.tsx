@@ -10,57 +10,34 @@ export interface Images {
 }
 
 export const CreatePost = () => {
-  const webcamRef = useRef<Webcam>(null)
-  const [userMediaLoaded, setUserMediaLoaded] = useState<boolean>(false)
+  const userWebcamRef = useRef<Webcam>(null)
+  const environmentWebcamRef = useRef<Webcam>(null)
+
   const [timer, setTimer] = useState<number | null>(null)
   const [images, setImages] = useState<Images>({
     user: null,
     environment: null
   })
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user')
   const [name, setName] = useState('')
 
-  const swapFacingMode = () => {
-    setUserMediaLoaded(false)
-    setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'))
-  }
-
-  const showTimer = async (value: number) => {
-    return new Promise((resolve) => {
-      setTimer(value)
-
-      const interval = setInterval(() => {
-        setTimer((prev) => {
-          if (prev !== null && prev > 1) {
-            return prev - 1
-          } else {
-            clearInterval(interval)
-            resolve(null)
-            return null
-          }
-        })
-      }, 1000)
-    })
-  }
-
   const handleTake = async () => {
-    const currentWebcam = webcamRef.current
-    if (!currentWebcam) return
+    const currentUserWebcam = userWebcamRef.current
+    const currentEnvironmentWebcam = environmentWebcamRef.current
 
-    setImages((prev) => ({
-      ...prev,
-      [facingMode]: currentWebcam.getScreenshot()
-    }))
-
-    swapFacingMode()
-    await showTimer(1)
-
-    setImages((prev) => ({
-      ...prev,
-      [facingMode === 'user' ? 'environment' : 'user']: currentWebcam.getScreenshot()
-    }))
-
-    setFacingMode('user')
+    setImages({
+      user: currentUserWebcam
+        ? currentUserWebcam?.getScreenshot({
+            height: 1920,
+            width: 1080
+          })
+        : null,
+      environment: currentEnvironmentWebcam
+        ? currentEnvironmentWebcam?.getScreenshot({
+            height: 1920,
+            width: 1080
+          })
+        : null
+    })
   }
 
   useEffect(() => {
@@ -143,30 +120,23 @@ export const CreatePost = () => {
         )}
 
         <Webcam
-          ref={webcamRef}
+          ref={userWebcamRef}
           audio={false}
-          mirrored={facingMode === 'user'}
           className="h-full object-cover"
           screenshotFormat="image/webp"
           videoConstraints={{
-            facingMode
-          }}
-          onUserMedia={(ev) => {
-            console.log('onUserMedia', ev)
-            setUserMediaLoaded(true)
+            facingMode: 'user'
           }}
         />
+
         <Webcam
-          ref={webcamRef}
-          audio={facingMode === 'user'}
+          ref={environmentWebcamRef}
+          audio={false}
+          mirrored
           className="absolute top-2 left-2 w-40 object-cover rounded"
           screenshotFormat="image/webp"
           videoConstraints={{
-            facingMode: facingMode === 'user' ? 'environment' : 'user'
-          }}
-          onUserMedia={(ev) => {
-            console.log('onUserMedia', ev)
-            setUserMediaLoaded(true)
+            facingMode: 'environment'
           }}
         />
 
@@ -174,10 +144,6 @@ export const CreatePost = () => {
           <>
             <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
               <img src="/camera.svg" className="w-6 h-6" />
-            </button>
-
-            <button onClick={swapFacingMode} className="absolute bottom-8 right-8 border opacity-50 rounded-full p-4">
-              <img src="/camera-rotate.svg" className="w-6 h-6" />
             </button>
           </>
         )}
