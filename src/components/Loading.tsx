@@ -23,7 +23,7 @@ export const Loading = () => {
         </circle>
       </svg>
 
-      <p className="text-lg opacity-70">Cargando...</p>
+      <p className="opacity-60">Cargando...</p>
     </div>
   )
 }
