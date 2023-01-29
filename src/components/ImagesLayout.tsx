@@ -7,6 +7,7 @@ const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/pub
 export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [swapped, setSwapped] = useState<boolean>(false)
+  const [position, setPosition] = useState<'left' | 'right'>('left')
 
   return (
     <div className="relative w-full">
@@ -24,16 +25,24 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
       <Draggable
         position={{ x: 0, y: 0 }}
         bounds={`#drag-container-${id}`}
-        onStop={() => {
-          if (!isDragging) setSwapped((prev) => !prev)
-          setIsDragging(false)
+        onStop={(ev) => {
+          if (!isDragging) {
+            setSwapped((prev) => !prev)
+          } else {
+            const containerWidth = document.getElementById(`drag-container-${id}`)?.clientWidth || 1000
+            const event = ev as TouchEvent
+            const touch = event.changedTouches[0]
+
+            setPosition(touch.clientX > containerWidth / 2 ? 'right' : 'left')
+            setIsDragging(false)
+          }
         }}
         onDrag={() => {
           setIsDragging(true)
         }}
       >
         <img
-          className="absolute top-2 left-2 rounded"
+          className={`absolute top-2 ${position}-2 rounded`}
           src={images[swapped ? 0 : 1]}
           id={`${!swapped ? 'environment' : 'user'}-${id}`}
           loading="lazy"
