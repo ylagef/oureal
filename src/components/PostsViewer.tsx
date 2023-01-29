@@ -4,6 +4,7 @@ import html2canvas from 'html2canvas'
 import { OuRealLogo } from './OuRealLogo'
 import Draggable from 'react-draggable'
 import { ImagesLayout } from './ImagesLayout'
+import { Loading } from './Loading'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
@@ -13,6 +14,7 @@ export const PostsViewer = () => {
   const [myPostId, setMyPostId] = useState<string | null>(null)
   const [formattedPosts, setFormattedPosts] = useState<Post[]>([])
   const [confirmDelete, setConfirmDelete] = useState<string | null>()
+  const [loading, setLoading] = useState<boolean>(true)
 
   const shareOnSocialMedia = async (post: Post) => {
     if (!('share' in navigator)) {
@@ -115,6 +117,7 @@ export const PostsViewer = () => {
     setMyPostId(localStorage.getItem('postId'))
 
     getPosts().then((posts) => {
+      setLoading(false)
       setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
     })
 
@@ -126,65 +129,71 @@ export const PostsViewer = () => {
 
   return (
     <div className="flex grow flex-col gap-4 overflow-y-auto scrollbar-hide">
-      <div className="sticky top-0 z-10 p-2">
+      <div className="sticky top-0 z-10 p-2 backdrop-blur-sm">
         <OuRealLogo />
       </div>
 
-      <div className="flex flex-col gap-8">
-        {formattedPosts.map((post) => (
-          <div key={post.id} className="relative">
-            <div className={`w-full flex flex-col px-2 gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
-              <div className="flex justify-between items-center px-2 gap-2">
-                <div className="flex gap-2 items-center">
-                  <img src="/user.svg" alt="User" className="w-5 border rounded-full" />
-                  <span className="font-bold">{post.name}</span>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="flex flex-col gap-8">
+            {formattedPosts.map((post) => (
+              <div key={post.id} className="relative">
+                <div className={`w-full flex flex-col px-2 gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
+                  <div className="flex justify-between items-center px-2 gap-2">
+                    <div className="flex gap-2 items-center">
+                      <img src="/user.svg" alt="User" className="w-5 border rounded-full" />
+                      <span className="font-bold">{post.name}</span>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <span className="opacity-50 text-xs">
+                        {new Intl.DateTimeFormat('es-ES', {
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }).format(new Date(post.created_at))}
+                      </span>
+
+                      <button onClick={() => shareOnSocialMedia(post)}>
+                        <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
+                      </button>
+
+                      {(superAdmin || myPostId === post.id) && (
+                        <button onClick={() => setConfirmDelete(post.id)}>
+                          <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <ImagesLayout id={post.id} images={[`${BASE_URL}${post.id}/user.webp`, `${BASE_URL}${post.id}/environment.webp`]} />
                 </div>
-                <div className="flex gap-2 items-center">
-                  <span className="opacity-50 text-xs">
-                    {new Intl.DateTimeFormat('es-ES', {
-                      month: '2-digit',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    }).format(new Date(post.created_at))}
-                  </span>
 
-                  <button onClick={() => shareOnSocialMedia(post)}>
-                    <img src="/share.svg" alt="Share" className="w-5 opacity-70" />
-                  </button>
-
-                  {(superAdmin || myPostId === post.id) && (
-                    <button onClick={() => setConfirmDelete(post.id)}>
-                      <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
+                {confirmDelete === post.id && (
+                  <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
+                    <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
+                    <button className="font-bold bg-red-500 py-2 px-4 rounded-full" onClick={handleDeletePost(post.id)}>
+                      Confirmar
                     </button>
-                  )}
-                </div>
+                    <button
+                      className="text-xs"
+                      onClick={() => {
+                        setConfirmDelete(null)
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                )}
               </div>
-
-              <ImagesLayout id={post.id} images={[`${BASE_URL}${post.id}/user.webp`, `${BASE_URL}${post.id}/environment.webp`]} />
-            </div>
-
-            {confirmDelete === post.id && (
-              <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
-                <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
-                <button className="font-bold bg-red-500 py-2 px-4 rounded-full" onClick={handleDeletePost(post.id)}>
-                  Confirmar
-                </button>
-                <button
-                  className="text-xs"
-                  onClick={() => {
-                    setConfirmDelete(null)
-                  }}
-                >
-                  Cancelar
-                </button>
-              </div>
-            )}
+            ))}
           </div>
-        ))}
-      </div>
 
-      <span className="mt-2 mb-6 text-center opacity-50 text-xs">No hay más posts... Por ahora.</span>
+          <span className="mt-2 mb-6 text-center opacity-50 text-xs">No hay más posts... Por ahora.</span>
+        </>
+      )}
     </div>
   )
 }
