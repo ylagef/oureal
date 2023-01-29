@@ -11,6 +11,7 @@ export interface Images {
 
 export const CreatePost = () => {
   const webcamRef = useRef<Webcam>(null)
+  const [userMediaLoaded, setUserMediaLoaded] = useState<boolean>(false)
   const [timer, setTimer] = useState<number | null>(null)
   const [images, setImages] = useState<Images>({
     user: null,
@@ -20,6 +21,7 @@ export const CreatePost = () => {
   const [name, setName] = useState('')
 
   const swapFacingMode = () => {
+    setUserMediaLoaded(false)
     setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'))
   }
 
@@ -45,15 +47,13 @@ export const CreatePost = () => {
     const currentWebcam = webcamRef.current
     if (!currentWebcam) return
 
-    await showTimer(3)
-
     setImages((prev) => ({
       ...prev,
       [facingMode]: currentWebcam.getScreenshot()
     }))
 
     swapFacingMode()
-    await showTimer(3)
+    await showTimer(1)
 
     setImages((prev) => ({
       ...prev,
@@ -150,6 +150,23 @@ export const CreatePost = () => {
           screenshotFormat="image/webp"
           videoConstraints={{
             facingMode
+          }}
+          onUserMedia={(ev) => {
+            console.log('onUserMedia', ev)
+            setUserMediaLoaded(true)
+          }}
+        />
+        <Webcam
+          ref={webcamRef}
+          audio={facingMode === 'user'}
+          className="absolute top-2 left-2 w-40 object-cover rounded"
+          screenshotFormat="image/webp"
+          videoConstraints={{
+            facingMode: facingMode === 'user' ? 'environment' : 'user'
+          }}
+          onUserMedia={(ev) => {
+            console.log('onUserMedia', ev)
+            setUserMediaLoaded(true)
           }}
         />
 
