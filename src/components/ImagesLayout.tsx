@@ -31,11 +31,12 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
           } else {
             setIsDragging(false)
 
-            const containerWidth = document.getElementById(`drag-container-${id}`)?.clientWidth || 1000
+            const containerWidth = document.getElementById(`drag-container-${id}`)?.offsetWidth || 1000
             const event = ev as TouchEvent
             if (!event.changedTouches) return
             const touch = event.changedTouches[0]
 
+            alert(JSON.stringify({ clientX: touch.clientX, containerWidth: containerWidth }))
             setPosition(touch.clientX > containerWidth / 2 ? 'right' : 'left')
           }
         }}
