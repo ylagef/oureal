@@ -125,7 +125,7 @@ export const CreatePost = () => {
           ref={swapped ? environmentWebcamRef : userWebcamRef}
           audio={false}
           mirrored
-          className="absolute top-2 left-2 w-40 object-cover rounded"
+          className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           minScreenshotWidth={1000}
           videoConstraints={{
