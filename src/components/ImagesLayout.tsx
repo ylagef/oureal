@@ -29,12 +29,14 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
           if (!isDragging) {
             setSwapped((prev) => !prev)
           } else {
+            setIsDragging(false)
+
             const containerWidth = document.getElementById(`drag-container-${id}`)?.clientWidth || 1000
             const event = ev as TouchEvent
+            if (!event.changedTouches) return
             const touch = event.changedTouches[0]
 
             setPosition(touch.clientX > containerWidth / 2 ? 'right' : 'left')
-            setIsDragging(false)
           }
         }}
         onDrag={() => {
