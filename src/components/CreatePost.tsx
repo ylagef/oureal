@@ -88,7 +88,22 @@ export const CreatePost = () => {
           <OuRealLogo />
         </div>
 
-        <ImagesLayout id="test" images={[images.user, images.environment]} />
+        <div className="flex flex-col gap-2">
+          <button
+            className="w-full text-center py-2 px-4 rounded border border-white"
+            onClick={() => {
+              setImages({
+                user: null,
+                environment: null
+              })
+              localStorage.removeItem('images')
+            }}
+          >
+            Repetir foto
+          </button>
+
+          <ImagesLayout id="test" images={[images.user, images.environment]} />
+        </div>
 
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-col gap-1">
@@ -129,23 +144,14 @@ export const CreatePost = () => {
           >
             CREAR
           </button>
-
-          <button
-            className="text-xs underline mt-2"
-            onClick={() => {
-              setImages({
-                user: null,
-                environment: null
-              })
-              localStorage.removeItem('images')
-            }}
-          >
-            Repetir foto
-          </button>
         </div>
       </div>
     )
   }
+
+  // get screen width
+  const width = window.innerWidth
+  alert(width)
 
   return (
     <div className="w-full h-full bg-bckg">
@@ -159,6 +165,7 @@ export const CreatePost = () => {
           screenshotQuality={1}
           minScreenshotWidth={1200}
           videoConstraints={{
+            width,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
