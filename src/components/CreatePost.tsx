@@ -155,7 +155,7 @@ export const CreatePost = () => {
           audio={false}
           className="h-full object-cover"
           screenshotFormat="image/webp"
-          minScreenshotWidth={1000}
+          minScreenshotWidth={1500}
           screenshotQuality={1}
           videoConstraints={{
             facingMode: swapped ? 'user' : 'environment'
