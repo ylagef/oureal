@@ -154,7 +154,7 @@ export const CreatePost = () => {
           ref={swapped ? userWebcamRef : environmentWebcamRef}
           audio={false}
           mirrored={swapped}
-          className="h-full object-cover"
+          className="w-full object-cover"
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
@@ -166,7 +166,7 @@ export const CreatePost = () => {
         <Webcam
           ref={swapped ? environmentWebcamRef : userWebcamRef}
           audio={false}
-          mirrored={swapped}
+          mirrored={!swapped}
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           screenshotQuality={1}
