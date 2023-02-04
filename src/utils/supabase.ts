@@ -13,12 +13,20 @@ export interface Post {
   visible: boolean
 }
 
-export const getPosts = async () => {
-  const { data, error } = await supabase.from('posts').select().order('created_at', { ascending: false })
+export const getPosts = async (superAdmin: boolean) => {
+  if (superAdmin) {
+    const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false })
 
-  if (error) throw error
+    if (error) throw error
 
-  return data
+    return data as Post[]
+  } else {
+    const { data, error } = await supabase.from('posts').select('*').match({ visible: true }).order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    return data as Post[]
+  }
 }
 
 export const deletePost = async (id: string) => {
@@ -32,6 +40,15 @@ export const deletePost = async (id: string) => {
 
   console.log({ dataStorage, errorStorage })
   if (errorStorage) throw errorStorage
+
+  return data
+}
+
+export const updatePostVisibility = async (id: string, visible: boolean) => {
+  console.log('updating post visibility', id, visible)
+  const { data, error } = await supabase.from('posts').update({ visible }).match({ id })
+  console.log({ data, error })
+  if (error) throw error
 
   return data
 }

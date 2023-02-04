@@ -3661,11 +3661,6 @@ react-webcam@^7.0.1:
   resolved "https://registry.yarnpkg.com/react-webcam/-/react-webcam-7.0.1.tgz#8249e1d621eb4bba7e3f52135f562439d0528df3"
   integrity sha512-8E/Eb/7ksKwn5QdLn67tOR7+TdP9BZdu6E5/DSt20v8yfW/s0VGBigE6VA7R4278mBuBUowovAB3DkCfVmSPvA==
 
-react-zoom-pan-pinch@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/react-zoom-pan-pinch/-/react-zoom-pan-pinch-2.3.2.tgz#6eb781d67175cbd19514017a05e1445d392d2dda"
-  integrity sha512-SIz1+wDV51Yx+VsXkC/xopKY4L519tQROe2k19EDN0o95Tp/2u+o5q/s2RAqMjQF9JPOde1x7pgojz3+HrKGXA==
-
 react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"

@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Draggable from 'react-draggable'
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
-import type { Post } from '../utils/supabase'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
@@ -12,18 +10,14 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
 
   return (
     <div className="relative w-full">
-      <TransformWrapper>
-        <TransformComponent>
-          <img
-            className="rounded"
-            src={images[swapped ? 1 : 0]}
-            loading="lazy"
-            width={1000}
-            height={200}
-            id={`${swapped ? 'environment' : 'user'}-${id}`}
-          />
-        </TransformComponent>
-      </TransformWrapper>
+      <img
+        className="rounded"
+        src={images[swapped ? 1 : 0]}
+        loading="lazy"
+        width={1000}
+        height={200}
+        id={`${swapped ? 'environment' : 'user'}-${id}`}
+      />
 
       <div id={`drag-container-${id}`} className="absolute top-0 left-0 w-full h-full p-2" />
 

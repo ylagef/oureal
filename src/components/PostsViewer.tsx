@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { deletePost, getPosts, Post, supabase } from '../utils/supabase'
+import { deletePost, getPosts, Post, supabase, updatePostVisibility } from '../utils/supabase'
 import html2canvas from 'html2canvas'
 import { OuRealLogo } from './OuRealLogo'
 import Draggable from 'react-draggable'
@@ -115,17 +115,26 @@ export const PostsViewer = () => {
     }
   }
 
+  const handleUpdatePostVisibility = async (post: Post) => {
+    setLoading(true)
+
+    await updatePostVisibility(post.id, !post.visible)
+    setFormattedPosts((posts) => posts.map((p) => (p.id === post.id ? { ...p, visible: !p.visible } : p)))
+    setLoading(false)
+  }
+
   useEffect(() => {
     setMyPostId(localStorage.getItem('postId'))
 
-    getPosts().then((posts) => {
-      setLoading(false)
-      setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
-    })
-
     supabase.auth.getSession().then(({ data, error }) => {
       console.log({ data, error })
-      setSuperAdmin(data?.session !== null)
+      const isSuperAdmin = data?.session !== null
+      setSuperAdmin(isSuperAdmin)
+
+      getPosts(isSuperAdmin).then((posts) => {
+        setLoading(false)
+        setFormattedPosts(posts.map((post) => ({ ...post, swap: false })))
+      })
     })
   }, [])
 
@@ -141,15 +150,15 @@ export const PostsViewer = () => {
         <>
           <div className="flex flex-col gap-8 px-2">
             {formattedPosts.map((post) => (
-              <div key={post.id} className="relative">
+              <div key={post.id} className={`relative ${post.visible ? 'opacity-100' : 'opacity-50'}`}>
                 <div className={`w-full flex flex-col gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
                   <div className="flex justify-between items-center px-2 gap-2">
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center max-w-[50%]">
                       <img src="/user.svg" alt="User" className="w-5 border rounded-full" />
-                      <span className="font-bold">{post.name}</span>
+                      <span className="font-bold text-ellipsis overflow-hidden">{post.name}</span>
                     </div>
                     <div className="flex gap-2 items-center">
-                      <span className="opacity-50 text-xs">
+                      <span className="opacity-50 text-xs text-center">
                         {new Intl.DateTimeFormat('es-ES', {
                           month: '2-digit',
                           day: '2-digit',
@@ -169,20 +178,30 @@ export const PostsViewer = () => {
                           <img src="/delete.svg" alt="Delete" className="w-5 opacity-70" />
                         </button>
                       )}
+
+                      {superAdmin && (
+                        <button onClick={() => handleUpdatePostVisibility(post)}>
+                          <img src={`${post.visible ? 'eye-off' : 'eye'}.svg`} alt="Visible" className=" w-5 opacity-70" />
+                        </button>
+                      )}
                     </div>
                   </div>
 
                   <ImagesLayout id={post.id} images={[`${BASE_URL}${post.id}/user.webp`, `${BASE_URL}${post.id}/environment.webp`]} />
 
                   {post.caption && (
-                    <div className="px-4 py-2 opacity-80">
-                      <p className="text-justify">{post.caption}</p>
+                    <div className="px-2 opacity-80">
+                      <p className="text-sm break-words">
+                        <span className="font-bold mr-1">{post.name}</span>
+                        {post.caption}
+                      </p>
                     </div>
                   )}
                 </div>
                 {confirmDelete === post.id && (
                   <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
-                    <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>
+                    <span className="text-center">¿Seguro que deseas eliminar {superAdmin ? 'este' : 'tu'} post?</span>
+                    <span className="text-center mb-4 text-sm">Esta acción es irreversible</span>
                     <button className="font-bold bg-red-500 py-2 px-4 rounded-full" onClick={handleDeletePost(post.id)}>
                       Confirmar
                     </button>
