@@ -22,6 +22,7 @@ export const CreatePost = () => {
 
   const handleTake = async () => {
     setLoading(true)
+
     const currentUserWebcam = userWebcamRef.current
     const currentEnvironmentWebcam = environmentWebcamRef.current
 
@@ -29,6 +30,7 @@ export const CreatePost = () => {
       user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
       environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
     })
+
     setLoading(false)
   }
 
@@ -164,6 +166,7 @@ export const CreatePost = () => {
           screenshotQuality={1}
           videoConstraints={{
             width: 1080,
+            height: 1920,
             facingMode: swapped ? 'user' : 'environment'
           }}
           forceScreenshotSourceSize
@@ -179,6 +182,7 @@ export const CreatePost = () => {
           screenshotQuality={1}
           videoConstraints={{
             width: 1080,
+            height: 1920,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
