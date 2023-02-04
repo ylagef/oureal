@@ -21,6 +21,7 @@ export const CreatePost = () => {
   const [loading, setLoading] = useState(true)
 
   const handleTake = async () => {
+    setLoading(true)
     const currentUserWebcam = userWebcamRef.current
     const currentEnvironmentWebcam = environmentWebcamRef.current
 
@@ -28,6 +29,7 @@ export const CreatePost = () => {
       user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
       environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
     })
+    setLoading(false)
   }
 
   const handleCreatePost = async () => {
@@ -158,9 +160,10 @@ export const CreatePost = () => {
           audio={false}
           mirrored={swapped}
           className="h-full object-cover"
-          screenshotFormat="image/jpeg"
+          screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
+            width: 1080,
             facingMode: swapped ? 'user' : 'environment'
           }}
           forceScreenshotSourceSize
@@ -172,9 +175,10 @@ export const CreatePost = () => {
           audio={false}
           mirrored={!swapped}
           className="absolute top-2 left-2 w-32 object-cover rounded"
-          screenshotFormat="image/jpeg"
+          screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
+            width: 1080,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
