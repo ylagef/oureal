@@ -20,7 +20,7 @@ export const CreatePost = () => {
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const [videoDevices, setVideoDevices] = useState<MediaTrackSettings[]>([])
+  const [videoDevices, setVideoDevices] = useState<{ [key: string]: MediaTrackSettings }>({})
 
   const handleTake = async () => {
     const currentUserWebcam = userWebcamRef.current
@@ -66,13 +66,31 @@ export const CreatePost = () => {
 
   useEffect(() => {
     // log all video devices
-    navigator.mediaDevices.getUserMedia({ video: true }).then((display) => {
-      const settings = display.getVideoTracks().map((track) => {
-        return track.getSettings()
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          facingMode: 'environment'
+        }
       })
-      alert(JSON.stringify(settings, null, 2))
-      setVideoDevices(settings)
-    })
+      .then((display) => {
+        setVideoDevices({
+          ...videoDevices,
+          environment: display.getVideoTracks()[0].getSettings()
+        })
+      })
+
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          facingMode: 'user'
+        }
+      })
+      .then((display) => {
+        setVideoDevices({
+          ...videoDevices,
+          user: display.getVideoTracks()[0].getSettings()
+        })
+      })
 
     let lsImages = localStorage.getItem('images')
     if (lsImages) {
@@ -160,6 +178,8 @@ export const CreatePost = () => {
     )
   }
 
+  console.log({ videoDevices })
+
   return (
     <div className="w-full h-full bg-bckg">
       <div className="w-full h-full relative grid items-center">
@@ -174,9 +194,9 @@ export const CreatePost = () => {
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: videoDevices[0]?.width,
-            height: videoDevices[0]?.height,
-            aspectRatio: videoDevices[0]?.aspectRatio,
+            width: videoDevices[swapped ? 'user' : 'environment']?.width,
+            height: videoDevices[swapped ? 'user' : 'environment']?.height,
+            aspectRatio: videoDevices[swapped ? 'user' : 'environment']?.aspectRatio,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -192,9 +212,9 @@ export const CreatePost = () => {
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: videoDevices[0]?.width,
-            height: videoDevices[0]?.height,
-            aspectRatio: videoDevices[0]?.aspectRatio,
+            width: videoDevices[swapped ? 'environment' : 'user']?.width,
+            height: videoDevices[swapped ? 'environment' : 'user']?.height,
+            aspectRatio: videoDevices[swapped ? 'environment' : 'user']?.aspectRatio,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
