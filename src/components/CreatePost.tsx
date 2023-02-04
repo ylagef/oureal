@@ -161,11 +161,10 @@ export const CreatePost = () => {
           screenshotQuality={1}
           forceScreenshotSourceSize
           minScreenshotWidth={1080}
-          width={1080}
           imageSmoothing
           videoConstraints={{
             width: 1080,
-            aspectRatio: 9 / 16,
+            aspectRatio: 16 / 9,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -179,11 +178,10 @@ export const CreatePost = () => {
           screenshotQuality={1}
           forceScreenshotSourceSize
           minScreenshotWidth={1080}
-          width={1080}
           imageSmoothing
           videoConstraints={{
             width: 1080,
-            aspectRatio: 9 / 16,
+            aspectRatio: 16 / 9,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
