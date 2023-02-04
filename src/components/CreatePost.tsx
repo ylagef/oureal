@@ -25,8 +25,8 @@ export const CreatePost = () => {
     const currentEnvironmentWebcam = environmentWebcamRef.current
 
     setImages({
-      user: currentUserWebcam ? currentUserWebcam?.getScreenshot({ width: 1920, height: 1080 }) : null,
-      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot({ width: 1920, height: 1080 }) : null
+      user: currentUserWebcam ? currentUserWebcam?.getScreenshot({ height: 1920, width: 1080 }) : null,
+      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot({ height: 1920, width: 1080 }) : null
     })
   }
 
