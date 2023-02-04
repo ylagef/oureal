@@ -29,42 +29,22 @@ export const CreatePost = () => {
   }
 
   const handleTake = async () => {
-    console.log('take')
-    if (swapped) {
-      console.log('1')
-      const currentEnvironmentWebcam = environmentWebcamRef.current
-      const environmentImage = currentEnvironmentWebcam?.getScreenshot()
-      if (!environmentImage) return
+    const currentWebcam = swapped ? environmentWebcamRef.current : userWebcamRef.current
+    const otherWebcam = swapped ? userWebcamRef.current : environmentWebcamRef.current
 
-      console.log('2')
-      setImages((prev) => ({ ...prev, environment: environmentImage }))
+    const currentImage = currentWebcam?.getScreenshot()
+    if (!currentImage) return
 
-      setSwapped((prev) => !prev)
-      await waitSeconds(2)
-      console.log('3')
-      const currentUserWebcam = userWebcamRef.current
-      const userImage = currentUserWebcam?.getScreenshot()
-      if (!userImage) return
+    setImages((prev) => ({ ...prev, [swapped ? 'environment' : 'user']: currentImage }))
 
-      setImages((prev) => ({ ...prev, user: userImage }))
-    } else {
-      console.log('4')
-      const currentUserWebcam = userWebcamRef.current
-      const userImage = currentUserWebcam?.getScreenshot()
-      if (!userImage) return
+    await waitSeconds(1)
+    setSwapped((prev) => !prev)
+    await waitSeconds(2)
 
-      setImages((prev) => ({ ...prev, user: userImage }))
+    const otherImage = otherWebcam?.getScreenshot()
+    if (!otherImage) return
 
-      console.log('5')
-      setSwapped((prev) => !prev)
-      await waitSeconds(2)
-      console.log('6')
-      const currentEnvironmentWebcam = environmentWebcamRef.current
-      const environmentImage = currentEnvironmentWebcam?.getScreenshot()
-      if (!environmentImage) return
-
-      setImages((prev) => ({ ...prev, environment: environmentImage }))
-    }
+    setImages((prev) => ({ ...prev, [swapped ? 'user' : 'environment']: otherImage }))
   }
 
   const handleCreatePost = async () => {
@@ -219,6 +199,10 @@ export const CreatePost = () => {
 
         <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
           <img src="/camera.svg" className="w-6 h-6" />
+        </button>
+
+        <button onClick={() => setSwapped((prev) => !prev)} className="absolute top-6 right-6 bg-white opacity-50 rounded-full p-2">
+          <img src="/camera-rotate.svg" className="w-4 h-4" />
         </button>
       </div>
     </div>
