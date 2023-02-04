@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import Webcam from 'react-webcam'
+
 import { createPost } from '../utils/supabase'
 import { ImagesLayout } from './ImagesLayout'
 import { OuRealLogo } from './OuRealLogo'
@@ -13,8 +13,8 @@ export interface Images {
 }
 
 export const CreatePost = () => {
-  const userWebcamRef = useRef<Webcam>(null)
-  const environmentWebcamRef = useRef<Webcam>(null)
+  // const userWebcamRef = useRef<Webcam>(null)
+  // const environmentWebcamRef = useRef<Webcam>(null)
 
   const [swapped, setSwapped] = useState<boolean>(false)
   const [images, setImages] = useState<Images>({ user: null, environment: null })
@@ -23,13 +23,12 @@ export const CreatePost = () => {
   const [loading, setLoading] = useState(false)
 
   const handleTake = async () => {
-    const currentUserWebcam = userWebcamRef.current
-    const currentEnvironmentWebcam = environmentWebcamRef.current
-
-    setImages({
-      user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
-      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
-    })
+    // const currentUserWebcam = userWebcamRef.current
+    // const currentEnvironmentWebcam = environmentWebcamRef.current
+    // setImages({
+    //   user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
+    //   environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
+    // })
   }
 
   useEffect(() => {
