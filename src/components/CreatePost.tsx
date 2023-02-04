@@ -70,7 +70,7 @@ export const CreatePost = () => {
       const settings = display.getVideoTracks().map((track) => {
         return track.getSettings()
       })
-      console.log({ settings })
+      alert(JSON.stringify(settings, null, 2))
       setVideoDevices(settings)
     })
 
