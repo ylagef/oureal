@@ -37,14 +37,14 @@ export const CreatePost = () => {
 
     setImages((prev) => ({ ...prev, [swapped ? 'environment' : 'user']: currentImage }))
 
-    await waitSeconds(1)
     setSwapped((prev) => !prev)
-    await waitSeconds(2)
+    await waitSeconds(1)
 
     const otherImage = otherWebcam?.getScreenshot()
     if (!otherImage) return
 
     setImages((prev) => ({ ...prev, [swapped ? 'user' : 'environment']: otherImage }))
+    setSwapped(false)
   }
 
   const handleCreatePost = async () => {
@@ -172,36 +172,35 @@ export const CreatePost = () => {
       <div className="w-full h-full relative grid items-center">
         <Webcam
           ref={environmentWebcamRef}
-          audio={false}
-          className={`h-full object-cover ${swapped ? '' : 'hidden'}`}
-          screenshotFormat="image/webp"
-          screenshotQuality={1}
+          className={`absolute top-0 left-0 h-full object-cover transition-transform ${swapped ? '' : 'translate-x-full'}`}
           videoConstraints={{
             facingMode: 'environment'
           }}
-          forceScreenshotSourceSize
+          audio={false}
           imageSmoothing
+          screenshotQuality={1}
+          forceScreenshotSourceSize
+          screenshotFormat="image/webp"
         />
 
         <Webcam
           ref={userWebcamRef}
-          audio={false}
-          mirrored
-          className={`h-full object-cover ${swapped ? 'hidden' : ''}`}
-          screenshotFormat="image/webp"
-          screenshotQuality={1}
+          className={`absolute top-0 left-0 h-full object-cover transition-transform -scale-x-100 z-10 ${swapped ? '-translate-x-full' : ''}`}
           videoConstraints={{
             facingMode: 'user'
           }}
-          forceScreenshotSourceSize
+          audio={false}
           imageSmoothing
+          screenshotQuality={1}
+          forceScreenshotSourceSize
+          screenshotFormat="image/webp"
         />
 
-        <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
+        <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4 z-20">
           <img src="/camera.svg" className="w-6 h-6" />
         </button>
 
-        <button onClick={() => setSwapped((prev) => !prev)} className="absolute top-6 right-6 bg-white opacity-50 rounded-full p-2">
+        <button onClick={() => setSwapped((prev) => !prev)} className="absolute top-6 right-6 bg-white opacity-50 rounded-full p-2 z-20">
           <img src="/camera-rotate.svg" className="w-4 h-4" />
         </button>
       </div>
