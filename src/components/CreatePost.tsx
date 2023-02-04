@@ -163,6 +163,7 @@ export const CreatePost = () => {
           imageSmoothing
           videoConstraints={{
             width: 1080,
+            height: 1920,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -178,6 +179,7 @@ export const CreatePost = () => {
           imageSmoothing
           videoConstraints={{
             width: 1080,
+            height: 1920,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
