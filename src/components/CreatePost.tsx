@@ -101,8 +101,9 @@ export const CreatePost = () => {
           >
             Repetir foto
           </button>
-
-          <ImagesLayout id="test" images={[images.user, images.environment]} />
+          <div className="w-[70%] mx-auto">
+            <ImagesLayout id="test" images={[images.user, images.environment]} />
+          </div>
         </div>
 
         <div className="flex flex-col gap-4 w-full">
@@ -162,6 +163,7 @@ export const CreatePost = () => {
           forceScreenshotSourceSize
           imageSmoothing
           videoConstraints={{
+            aspectRatio: 16 / 9,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
