@@ -157,7 +157,7 @@ export const PostsView = ({
 
             {superAdmin && (
               <button onClick={() => handleUpdatePostVisibility(post)}>
-                <img src={`${post.visible ? 'eye-off' : 'eye'}.svg`} alt="Visible" className=" w-5 opacity-70" />
+                <img src={post.visible ? 'eye-off.svg' : 'eye.svg'} alt="Visible" className=" w-5 opacity-70" />
               </button>
             )}
           </div>
