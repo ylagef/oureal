@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-
+import Webcam from 'react-webcam'
 import { createPost } from '../utils/supabase'
 import { ImagesLayout } from './ImagesLayout'
 import { OuRealLogo } from './OuRealLogo'
 import { Loading } from './Loading'
-import Camera, { IMAGE_TYPES } from 'react-html5-camera-photo'
-import 'react-html5-camera-photo/build/css/index.css'
 
 export interface Images {
   user: string | null
@@ -13,8 +11,8 @@ export interface Images {
 }
 
 export const CreatePost = () => {
-  // const userWebcamRef = useRef<Webcam>(null)
-  // const environmentWebcamRef = useRef<Webcam>(null)
+  const userWebcamRef = useRef<Webcam>(null)
+  const environmentWebcamRef = useRef<Webcam>(null)
 
   const [swapped, setSwapped] = useState<boolean>(false)
   const [images, setImages] = useState<Images>({ user: null, environment: null })
@@ -23,12 +21,13 @@ export const CreatePost = () => {
   const [loading, setLoading] = useState(false)
 
   const handleTake = async () => {
-    // const currentUserWebcam = userWebcamRef.current
-    // const currentEnvironmentWebcam = environmentWebcamRef.current
-    // setImages({
-    //   user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
-    //   environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
-    // })
+    const currentUserWebcam = userWebcamRef.current
+    const currentEnvironmentWebcam = environmentWebcamRef.current
+
+    setImages({
+      user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
+      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
+    })
   }
 
   useEffect(() => {
@@ -153,60 +152,32 @@ export const CreatePost = () => {
   return (
     <div className="w-full h-full bg-bckg">
       <div className="w-full h-full relative grid items-center">
-        {/* <Webcam
+        <Webcam
           ref={swapped ? userWebcamRef : environmentWebcamRef}
           audio={false}
           mirrored={swapped}
           className="h-full object-cover"
           screenshotFormat="image/webp"
           screenshotQuality={1}
+          forceScreenshotSourceSize
           videoConstraints={{
             facingMode: swapped ? 'user' : 'environment'
           }}
-        /> */}
+        />
 
-        <div className="h-full object-cover">
-          <Camera
-            // className="absolute top-2 left-2 w-32 object-cover rounded"
-            onTakePhoto={(dataUri) => {
-              console.log('takePhoto', dataUri)
-            }}
-            idealFacingMode={swapped ? 'environment' : 'user'}
-            isSilentMode={true}
-            isImageMirror={swapped}
-            isFullscreen={true}
-            imageType={IMAGE_TYPES.JPG}
-            isMaxResolution={true}
-            sizeFactor={1}
-          />
-        </div>
-
-        <div className="absolute top-2 left-2 w-32 object-cover rounded">
-          <Camera
-            onTakePhoto={(dataUri) => {
-              console.log('takePhoto', dataUri)
-            }}
-            idealFacingMode={swapped ? 'user' : 'environment'}
-            isSilentMode={true}
-            isImageMirror={!swapped}
-            imageType={IMAGE_TYPES.JPG}
-            isMaxResolution={true}
-            sizeFactor={1}
-          />
-        </div>
-
-        {/* <Webcam
+        <Webcam
           ref={swapped ? environmentWebcamRef : userWebcamRef}
           audio={false}
           mirrored={!swapped}
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           screenshotQuality={1}
+          forceScreenshotSourceSize
           videoConstraints={{
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
-        /> */}
+        />
 
         <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
           <img src="/camera.svg" className="w-6 h-6" />
