@@ -25,8 +25,8 @@ export const CreatePost = () => {
     const currentEnvironmentWebcam = environmentWebcamRef.current
 
     setImages({
-      user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
-      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
+      user: currentUserWebcam ? currentUserWebcam?.getScreenshot({ width: 1920, height: 1080 }) : null,
+      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot({ width: 1920, height: 1080 }) : null
     })
   }
 
@@ -163,7 +163,6 @@ export const CreatePost = () => {
           forceScreenshotSourceSize
           imageSmoothing
           videoConstraints={{
-            aspectRatio: 16 / 9,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
