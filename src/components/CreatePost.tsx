@@ -154,11 +154,11 @@ export const CreatePost = () => {
           ref={swapped ? userWebcamRef : environmentWebcamRef}
           audio={false}
           mirrored={swapped}
-          className="w-full object-cover"
+          className="h-full object-cover"
           screenshotFormat="image/webp"
           screenshotQuality={1}
+          minScreenshotWidth={1200}
           videoConstraints={{
-            frameRate: 60,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -170,8 +170,8 @@ export const CreatePost = () => {
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           screenshotQuality={1}
+          minScreenshotWidth={1200}
           videoConstraints={{
-            frameRate: 60,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
