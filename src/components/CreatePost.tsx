@@ -18,7 +18,7 @@ export const CreatePost = () => {
   const [images, setImages] = useState<Images>({ user: null, environment: null })
   const [name, setName] = useState('')
   const [caption, setCaption] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const handleTake = async () => {
     const currentUserWebcam = userWebcamRef.current
@@ -29,10 +29,6 @@ export const CreatePost = () => {
       environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
     })
   }
-
-  useEffect(() => {
-    if (images.user && images.environment) localStorage.setItem('images', JSON.stringify(images))
-  }, [images])
 
   const handleCreatePost = async () => {
     if (images.user && images.environment) {
@@ -63,11 +59,16 @@ export const CreatePost = () => {
   }
 
   useEffect(() => {
+    if (images.user && images.environment) localStorage.setItem('images', JSON.stringify(images))
+  }, [images])
+
+  useEffect(() => {
     let lsImages = localStorage.getItem('images')
     if (lsImages) {
       const imagesObj = JSON.parse(lsImages) as Images
       setImages(imagesObj)
     }
+    setLoading(false)
   }, [])
 
   if (loading) {
@@ -101,9 +102,8 @@ export const CreatePost = () => {
           >
             Repetir foto
           </button>
-          <div className="w-[70%] mx-auto">
-            <ImagesLayout id="test" images={[images.user, images.environment]} />
-          </div>
+
+          <ImagesLayout id="test" images={[images.user, images.environment]} />
         </div>
 
         <div className="flex flex-col gap-4 w-full">
@@ -157,14 +157,10 @@ export const CreatePost = () => {
           ref={swapped ? userWebcamRef : environmentWebcamRef}
           audio={false}
           mirrored={swapped}
-          className="h-full object-cover"
+          className="w-full object-cover"
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
-            autoGainControl: true,
-            sampleRate: 44100,
-            sampleSize: 16,
-            noiseSuppression: true,
             facingMode: swapped ? 'user' : 'environment'
           }}
           forceScreenshotSourceSize
@@ -181,9 +177,9 @@ export const CreatePost = () => {
           videoConstraints={{
             facingMode: swapped ? 'environment' : 'user'
           }}
+          onClick={() => setSwapped((prev) => !prev)}
           forceScreenshotSourceSize
           imageSmoothing
-          onClick={() => setSwapped((prev) => !prev)}
         />
 
         <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4">
