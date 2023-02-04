@@ -47,7 +47,7 @@ export const PostsViewer = () => {
             ))}
           </div>
 
-          <span className="mt-2 mb-6 text-center opacity-50 text-xs">No hay más posts... Por ahora.</span>
+          <span className="mt-2 mb-6 text-center opacity-50 text-xs">No hay {formattedPosts?.length > 0 ? 'más' : ''} posts... Por ahora.</span>
         </>
       )}
     </div>
