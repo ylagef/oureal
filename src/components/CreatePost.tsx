@@ -158,6 +158,7 @@ export const CreatePost = () => {
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
+            frameRate: 60,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -165,11 +166,12 @@ export const CreatePost = () => {
         <Webcam
           ref={swapped ? environmentWebcamRef : userWebcamRef}
           audio={false}
-          mirrored
+          mirrored={swapped}
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
+            frameRate: 60,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
