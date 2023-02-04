@@ -163,7 +163,6 @@ export const CreatePost = () => {
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: 1080,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -179,7 +178,6 @@ export const CreatePost = () => {
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: 1080,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
