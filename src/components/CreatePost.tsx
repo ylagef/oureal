@@ -168,6 +168,7 @@ export const CreatePost = () => {
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           minScreenshotWidth={1000}
+          forceScreenshotSourceSize={true}
           videoConstraints={{
             facingMode: swapped ? 'environment' : 'user'
           }}
