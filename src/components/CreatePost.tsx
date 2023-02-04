@@ -73,6 +73,11 @@ export const CreatePost = () => {
         }
       })
       .then((display) => {
+        alert(
+          JSON.stringify({
+            environment: display.getVideoTracks()[0].getSettings()
+          })
+        )
         setVideoDevices({
           ...videoDevices,
           environment: display.getVideoTracks()[0].getSettings()
@@ -86,6 +91,11 @@ export const CreatePost = () => {
         }
       })
       .then((display) => {
+        alert(
+          JSON.stringify({
+            user: display.getVideoTracks()[0].getSettings()
+          })
+        )
         setVideoDevices({
           ...videoDevices,
           user: display.getVideoTracks()[0].getSettings()
@@ -177,8 +187,6 @@ export const CreatePost = () => {
       </div>
     )
   }
-
-  console.log({ videoDevices })
 
   return (
     <div className="w-full h-full bg-bckg">
