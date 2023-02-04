@@ -20,6 +20,8 @@ export const CreatePost = () => {
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [videoDevices, setVideoDevices] = useState<MediaTrackSettings[]>([])
+
   const handleTake = async () => {
     const currentUserWebcam = userWebcamRef.current
     const currentEnvironmentWebcam = environmentWebcamRef.current
@@ -63,6 +65,15 @@ export const CreatePost = () => {
   }
 
   useEffect(() => {
+    // log all video devices
+    navigator.mediaDevices.getUserMedia({ video: true }).then((display) => {
+      const settings = display.getVideoTracks().map((track) => {
+        return track.getSettings()
+      })
+      console.log({ settings })
+      setVideoDevices(settings)
+    })
+
     let lsImages = localStorage.getItem('images')
     if (lsImages) {
       const imagesObj = JSON.parse(lsImages) as Images
@@ -163,8 +174,9 @@ export const CreatePost = () => {
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: 1080,
-
+            width: videoDevices[0]?.width,
+            height: videoDevices[0]?.height,
+            aspectRatio: videoDevices[0]?.aspectRatio,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -180,8 +192,9 @@ export const CreatePost = () => {
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: 1080,
-
+            width: videoDevices[0]?.width,
+            height: videoDevices[0]?.height,
+            aspectRatio: videoDevices[0]?.aspectRatio,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
