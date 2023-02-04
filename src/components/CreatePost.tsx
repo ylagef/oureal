@@ -20,18 +20,51 @@ export const CreatePost = () => {
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const handleTake = async () => {
-    setLoading(true)
-
-    const currentUserWebcam = userWebcamRef.current
-    const currentEnvironmentWebcam = environmentWebcamRef.current
-
-    setImages({
-      user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
-      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
+  const waitSeconds = async (seconds: number) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true)
+      }, seconds * 1000)
     })
+  }
 
-    setLoading(false)
+  const handleTake = async () => {
+    console.log('take')
+    if (swapped) {
+      console.log('1')
+      const currentEnvironmentWebcam = environmentWebcamRef.current
+      const environmentImage = currentEnvironmentWebcam?.getScreenshot()
+      if (!environmentImage) return
+
+      console.log('2')
+      setImages((prev) => ({ ...prev, environment: environmentImage }))
+
+      setSwapped((prev) => !prev)
+      await waitSeconds(2)
+      console.log('3')
+      const currentUserWebcam = userWebcamRef.current
+      const userImage = currentUserWebcam?.getScreenshot()
+      if (!userImage) return
+
+      setImages((prev) => ({ ...prev, user: userImage }))
+    } else {
+      console.log('4')
+      const currentUserWebcam = userWebcamRef.current
+      const userImage = currentUserWebcam?.getScreenshot()
+      if (!userImage) return
+
+      setImages((prev) => ({ ...prev, user: userImage }))
+
+      console.log('5')
+      setSwapped((prev) => !prev)
+      await waitSeconds(2)
+      console.log('6')
+      const currentEnvironmentWebcam = environmentWebcamRef.current
+      const environmentImage = currentEnvironmentWebcam?.getScreenshot()
+      if (!environmentImage) return
+
+      setImages((prev) => ({ ...prev, environment: environmentImage }))
+    }
   }
 
   const handleCreatePost = async () => {
@@ -158,32 +191,28 @@ export const CreatePost = () => {
     <div className="w-full h-full bg-bckg">
       <div className="w-full h-full relative grid items-center">
         <Webcam
-          ref={swapped ? userWebcamRef : environmentWebcamRef}
+          ref={environmentWebcamRef}
           audio={false}
-          mirrored={swapped}
-          className="h-full object-cover"
+          className={`h-full object-cover ${swapped ? '' : 'hidden'}`}
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
-            sampleSize: 32,
-            facingMode: swapped ? 'user' : 'environment'
+            facingMode: 'environment'
           }}
           forceScreenshotSourceSize
           imageSmoothing
         />
 
         <Webcam
-          ref={swapped ? environmentWebcamRef : userWebcamRef}
+          ref={userWebcamRef}
           audio={false}
-          mirrored={!swapped}
-          className="absolute top-2 left-2 w-32 object-cover rounded"
+          mirrored
+          className={`h-full object-cover ${swapped ? 'hidden' : ''}`}
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
-            sampleSize: 32,
-            facingMode: swapped ? 'environment' : 'user'
+            facingMode: 'user'
           }}
-          onClick={() => setSwapped((prev) => !prev)}
           forceScreenshotSourceSize
           imageSmoothing
         />
