@@ -155,10 +155,9 @@ export const CreatePost = () => {
           audio={false}
           className="h-full object-cover"
           screenshotFormat="image/webp"
-          minScreenshotWidth={1500}
+          minScreenshotWidth={1000}
           screenshotQuality={1}
           videoConstraints={{
-            width: 1500,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -169,10 +168,9 @@ export const CreatePost = () => {
           mirrored
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
-          minScreenshotWidth={1500}
+          minScreenshotWidth={1000}
           screenshotQuality={1}
           videoConstraints={{
-            width: 1500,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
