@@ -25,8 +25,8 @@ export const CreatePost = () => {
     const currentEnvironmentWebcam = environmentWebcamRef.current
 
     setImages({
-      user: currentUserWebcam ? currentUserWebcam?.getScreenshot({ height: 1920, width: 1080 }) : null,
-      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot({ height: 1920, width: 1080 }) : null
+      user: currentUserWebcam ? currentUserWebcam?.getScreenshot() : null,
+      environment: currentEnvironmentWebcam ? currentEnvironmentWebcam?.getScreenshot() : null
     })
   }
 
@@ -160,11 +160,15 @@ export const CreatePost = () => {
           className="h-full object-cover"
           screenshotFormat="image/webp"
           screenshotQuality={1}
-          forceScreenshotSourceSize
-          imageSmoothing
           videoConstraints={{
+            autoGainControl: true,
+            sampleRate: 44100,
+            sampleSize: 16,
+            noiseSuppression: true,
             facingMode: swapped ? 'user' : 'environment'
           }}
+          forceScreenshotSourceSize
+          imageSmoothing
         />
 
         <Webcam
@@ -174,11 +178,11 @@ export const CreatePost = () => {
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           screenshotQuality={1}
-          forceScreenshotSourceSize
-          imageSmoothing
           videoConstraints={{
             facingMode: swapped ? 'environment' : 'user'
           }}
+          forceScreenshotSourceSize
+          imageSmoothing
           onClick={() => setSwapped((prev) => !prev)}
         />
 
