@@ -165,8 +165,7 @@ export const CreatePost = () => {
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
-            width: 1080,
-            height: 1920,
+            sampleSize: 32,
             facingMode: swapped ? 'user' : 'environment'
           }}
           forceScreenshotSourceSize
@@ -181,8 +180,7 @@ export const CreatePost = () => {
           screenshotFormat="image/webp"
           screenshotQuality={1}
           videoConstraints={{
-            width: 1080,
-            height: 1920,
+            sampleSize: 32,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
