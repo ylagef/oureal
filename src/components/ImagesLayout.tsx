@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import Draggable from 'react-draggable'
 
-const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
-
 export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [swapped, setSwapped] = useState<boolean>(false)

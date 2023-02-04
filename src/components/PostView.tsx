@@ -4,7 +4,7 @@ import { deletePost, Post, updatePostVisibility } from '../utils/supabase'
 import { ImagesLayout } from './ImagesLayout'
 import { Loading } from './Loading'
 
-const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
+const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts'
 
 export const PostsView = ({
   post,
@@ -105,6 +105,7 @@ export const PostsView = ({
   }
 
   const handleDeletePost = (id: string) => async () => {
+    setConfirmDelete(null)
     setLoading(true)
 
     await deletePost(id)
@@ -126,8 +127,8 @@ export const PostsView = ({
   }
 
   return (
-    <div className={`relative ${post.visible ? 'opacity-100' : 'opacity-50'}`}>
-      <div className={`w-full flex flex-col gap-2 ${confirmDelete === post.id ? 'opacity-20' : 'opacity-100'}`} id={post.id}>
+    <div className={`relative ${post.visible ? 'opacity-100' : 'opacity-40'}`}>
+      <div className="w-full flex flex-col gap-2" id={post.id}>
         <div className="flex justify-between items-center px-2 gap-2">
           <div className="flex gap-2 items-center max-w-[50%]">
             <img src="/user.svg" alt="User" className="w-5 border rounded-full" />
@@ -163,7 +164,7 @@ export const PostsView = ({
           </div>
         </div>
 
-        <ImagesLayout id={post.id} images={[`${BASE_URL}${post.id}/user.webp`, `${BASE_URL}${post.id}/environment.webp`]} />
+        <ImagesLayout id={post.id} images={[`${BASE_URL}/${post.id}/user.webp`, `${BASE_URL}/${post.id}/environment.webp`]} />
 
         {post.caption && (
           <div className="px-2 opacity-80">
@@ -175,14 +176,8 @@ export const PostsView = ({
         )}
       </div>
 
-      {loading && (
-        <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10 bg-bckg/50">
-          <Loading />
-        </div>
-      )}
-
       {confirmDelete === post.id && (
-        <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10 bg-bckg/80">
           <span className="text-center">¿Seguro que deseas eliminar {superAdmin ? 'este' : 'tu'} post?</span>
           <span className="text-center mb-4 text-sm">Esta acción es irreversible</span>
           <button className="font-bold bg-red-500 py-2 px-4 rounded-full" onClick={handleDeletePost(post.id)}>
@@ -196,6 +191,12 @@ export const PostsView = ({
           >
             Cancelar
           </button>
+        </div>
+      )}
+
+      {loading && (
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-20 bg-bckg/80">
+          <Loading />
         </div>
       )}
     </div>
