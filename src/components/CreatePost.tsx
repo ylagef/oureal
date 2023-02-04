@@ -20,8 +20,6 @@ export const CreatePost = () => {
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const [videoDevices, setVideoDevices] = useState<{ [key: string]: MediaTrackSettings }>({})
-
   const handleTake = async () => {
     const currentUserWebcam = userWebcamRef.current
     const currentEnvironmentWebcam = environmentWebcamRef.current
@@ -65,43 +63,6 @@ export const CreatePost = () => {
   }
 
   useEffect(() => {
-    // log all video devices
-    navigator.mediaDevices
-      .getUserMedia({
-        video: {
-          facingMode: 'environment'
-        }
-      })
-      .then((display) => {
-        alert(
-          JSON.stringify({
-            environment: display.getVideoTracks()[0].getSettings()
-          })
-        )
-        setVideoDevices({
-          ...videoDevices,
-          environment: display.getVideoTracks()[0].getSettings()
-        })
-      })
-
-    navigator.mediaDevices
-      .getUserMedia({
-        video: {
-          facingMode: 'user'
-        }
-      })
-      .then((display) => {
-        alert(
-          JSON.stringify({
-            user: display.getVideoTracks()[0].getSettings()
-          })
-        )
-        setVideoDevices({
-          ...videoDevices,
-          user: display.getVideoTracks()[0].getSettings()
-        })
-      })
-
     let lsImages = localStorage.getItem('images')
     if (lsImages) {
       const imagesObj = JSON.parse(lsImages) as Images
@@ -198,12 +159,12 @@ export const CreatePost = () => {
           className="h-full object-cover"
           screenshotFormat="image/webp"
           screenshotQuality={1}
+          forceScreenshotSourceSize
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: videoDevices[swapped ? 'user' : 'environment']?.width,
-            height: videoDevices[swapped ? 'user' : 'environment']?.height,
-            aspectRatio: videoDevices[swapped ? 'user' : 'environment']?.aspectRatio,
+            width: 1080,
+            aspectRatio: 16 / 9,
             facingMode: swapped ? 'user' : 'environment'
           }}
         />
@@ -215,12 +176,12 @@ export const CreatePost = () => {
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           screenshotQuality={1}
+          forceScreenshotSourceSize
           minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
-            width: videoDevices[swapped ? 'environment' : 'user']?.width,
-            height: videoDevices[swapped ? 'environment' : 'user']?.height,
-            aspectRatio: videoDevices[swapped ? 'environment' : 'user']?.aspectRatio,
+            width: 1080,
+            aspectRatio: 16 / 9,
             facingMode: swapped ? 'environment' : 'user'
           }}
           onClick={() => setSwapped((prev) => !prev)}
