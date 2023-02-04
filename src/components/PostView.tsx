@@ -2,6 +2,7 @@ import html2canvas from 'html2canvas'
 import { useState } from 'react'
 import { deletePost, Post, updatePostVisibility } from '../utils/supabase'
 import { ImagesLayout } from './ImagesLayout'
+import { Loading } from './Loading'
 
 const BASE_URL = 'https://qnjsefzysabexpzkiqyr.supabase.co/storage/v1/object/public/posts/'
 
@@ -118,6 +119,7 @@ export const PostsView = ({
   }
 
   const handleUpdatePostVisibility = async (post: Post) => {
+    setLoading(true)
     await updatePostVisibility(post.id, !post.visible)
     await refreshPosts()
     setLoading(false)
@@ -172,6 +174,13 @@ export const PostsView = ({
           </div>
         )}
       </div>
+
+      {loading && (
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10 bg-bckg/50">
+          <Loading />
+        </div>
+      )}
+
       {confirmDelete === post.id && (
         <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
           <span className="text-center">¿Seguro que deseas eliminar {superAdmin ? 'este' : 'tu'} post?</span>
