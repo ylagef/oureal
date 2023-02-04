@@ -130,7 +130,7 @@ export const PostsViewer = () => {
   }, [])
 
   return (
-    <div className="flex grow flex-col gap-4 overflow-y-auto scrollbar-hide">
+    <div className="flex grow flex-col gap-2 overflow-y-auto scrollbar-hide">
       <div className="sticky top-0 z-10 p-2 backdrop-blur-sm">
         <OuRealLogo />
       </div>
@@ -154,7 +154,9 @@ export const PostsViewer = () => {
                           month: '2-digit',
                           day: '2-digit',
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
+                          hour12: false,
+                          timeZone: 'Europe/Madrid'
                         }).format(new Date(post.created_at))}
                       </span>
 
@@ -171,8 +173,13 @@ export const PostsViewer = () => {
                   </div>
 
                   <ImagesLayout id={post.id} images={[`${BASE_URL}${post.id}/user.webp`, `${BASE_URL}${post.id}/environment.webp`]} />
-                </div>
 
+                  {post.caption && (
+                    <div className="px-4 py-2 opacity-80">
+                      <p className="text-justify">{post.caption}</p>
+                    </div>
+                  )}
+                </div>
                 {confirmDelete === post.id && (
                   <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10">
                     <span className="text-center mb-4">¿Seguro que deseas eliminar tu post?</span>

@@ -9,6 +9,7 @@ export interface Post {
   id: string
   created_at: string
   name: string
+  caption?: string
   visible: boolean
 }
 
@@ -37,10 +38,12 @@ export const deletePost = async (id: string) => {
 
 export const createPost = async ({
   name,
+  caption,
   visible,
   images
 }: {
   name: string
+  caption: string
   visible: boolean
   images: {
     user: string | null
@@ -51,6 +54,7 @@ export const createPost = async ({
     .from('posts')
     .insert({
       name,
+      caption,
       visible
     })
     .select()

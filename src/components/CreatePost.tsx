@@ -17,6 +17,7 @@ export const CreatePost = () => {
   const [swapped, setSwapped] = useState<boolean>(false)
   const [images, setImages] = useState<Images>({ user: null, environment: null })
   const [name, setName] = useState('')
+  const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleTake = async () => {
@@ -38,6 +39,7 @@ export const CreatePost = () => {
       setLoading(true)
       const post = await createPost({
         name,
+        caption,
         visible: true,
         images
       })
@@ -49,6 +51,15 @@ export const CreatePost = () => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
+  }
+
+  const handleCaptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCaption(e.target.value)
+  }
+
+  function textAreaAdjust(element: HTMLTextAreaElement) {
+    element.style.height = '1px'
+    element.style.height = 5 + element.scrollHeight + 'px'
   }
 
   useEffect(() => {
@@ -79,13 +90,36 @@ export const CreatePost = () => {
 
         <ImagesLayout id="test" images={[images.user, images.environment]} />
 
-        <input
-          className="w-full bg-transparent border border-brdr rounded py-2 px-4 text-center"
-          maxLength={10}
-          placeholder="Tu nombre"
-          value={name}
-          onChange={handleNameChange}
-        />
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-1">
+            <label className="" htmlFor="name">
+              ¿Cómo te llamas? *
+            </label>
+            <input
+              id="name"
+              className="w-full bg-transparent border border-brdr rounded py-2 px-4 text-center"
+              maxLength={25}
+              placeholder="Tu nombre"
+              value={name}
+              onChange={handleNameChange}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="" htmlFor="caption">
+              ¿Qué está pasando?
+            </label>
+            <textarea
+              id="caption"
+              className="w-full bg-transparent border border-brdr rounded py-2 px-4 text-center resize-none h-[45px]"
+              maxLength={100}
+              placeholder="Descripción (opcional)"
+              value={caption}
+              onChange={handleCaptionChange}
+              onKeyUp={(e) => textAreaAdjust(e.target as HTMLTextAreaElement)}
+            />
+          </div>
+        </div>
 
         <div className="flex flex-col gap-2 items-center w-full mb-8">
           <button
@@ -97,7 +131,7 @@ export const CreatePost = () => {
           </button>
 
           <button
-            className="text-xs underline"
+            className="text-xs underline mt-2"
             onClick={() => {
               setImages({
                 user: null,
@@ -106,7 +140,7 @@ export const CreatePost = () => {
               localStorage.removeItem('images')
             }}
           >
-            Volver a intentarlo
+            Repetir foto
           </button>
         </div>
       </div>
