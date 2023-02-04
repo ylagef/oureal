@@ -159,8 +159,6 @@ export const CreatePost = () => {
           className="h-full object-cover"
           screenshotFormat="image/webp"
           screenshotQuality={1}
-          forceScreenshotSourceSize
-          minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
             width: 1080,
@@ -176,8 +174,6 @@ export const CreatePost = () => {
           className="absolute top-2 left-2 w-32 object-cover rounded"
           screenshotFormat="image/webp"
           screenshotQuality={1}
-          forceScreenshotSourceSize
-          minScreenshotWidth={1080}
           imageSmoothing
           videoConstraints={{
             width: 1080,
