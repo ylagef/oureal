@@ -42,7 +42,7 @@ export const ImagesLayout = ({ children, id, images }: { children?: React.ReactN
           if (!isDragging) {
             setTimeout(() => {
               setIsDragging(true)
-            }, 500)
+            }, 250)
           }
         }}
       >

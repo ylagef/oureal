@@ -1,10 +1,6 @@
 ---
-import { CreatePost } from '../components/CreatePost'
-import { OuRealLogo } from '../components/OuRealLogo'
 import { PostsViewer } from '../components/PostsViewer'
-import { Terms } from '../components/Terms'
 import Layout from '../layouts/Layout.astro'
-import { getPosts, Post } from '../utils/supabase'
 ---
 
 <Layout title="OuReal. - Entroido">
@@ -24,7 +20,7 @@ import { getPosts, Post } from '../utils/supabase'
     })
   </script>
 
-  <PostsViewer client:idle />
+  <PostsViewer client:load />
 
   <div id="share-helper"></div>
 </Layout>
