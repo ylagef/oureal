@@ -39,7 +39,11 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
           }
         }}
         onDrag={() => {
-          setIsDragging(true)
+          if (!isDragging) {
+            setTimeout(() => {
+              setIsDragging(true)
+            }, 500)
+          }
         }}
       >
         <img
