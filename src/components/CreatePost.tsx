@@ -32,6 +32,7 @@ export const CreatePost = () => {
     const currentWebcam = swapped ? environmentWebcamRef.current : userWebcamRef.current
     const otherWebcam = swapped ? userWebcamRef.current : environmentWebcamRef.current
 
+    await waitSeconds(1)
     const currentImage = currentWebcam?.getScreenshot()
     if (!currentImage) return
 
