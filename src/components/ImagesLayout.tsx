@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Draggable from 'react-draggable'
 
-export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) => {
+export const ImagesLayout = ({ children, id, images }: { children?: React.ReactNode; id: string; images: string[] }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [swapped, setSwapped] = useState<boolean>(false)
   const [position, setPosition] = useState<'left' | 'right'>('left')
@@ -55,6 +55,8 @@ export const ImagesLayout = ({ id, images }: { id: string; images: string[] }) =
           height={200}
         />
       </Draggable>
+
+      {children}
     </div>
   )
 }

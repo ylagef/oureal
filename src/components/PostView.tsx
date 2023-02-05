@@ -127,7 +127,7 @@ export const PostsView = ({
   }
 
   return (
-    <div className={`relative ${post.visible ? 'opacity-100' : 'opacity-40'}`}>
+    <div className="relative">
       <div className="w-full flex flex-col gap-2" id={post.id}>
         <div className="flex justify-between items-center px-2 gap-2">
           <div className="flex gap-2 items-center max-w-[50%]">
@@ -137,7 +137,7 @@ export const PostsView = ({
           <div className="flex gap-2 items-center">
             <span className="opacity-50 text-xs text-center">
               {new Intl.DateTimeFormat('es-ES', {
-                month: '2-digit',
+                month: 'short',
                 day: '2-digit',
                 hour: '2-digit',
                 minute: '2-digit',
@@ -164,7 +164,13 @@ export const PostsView = ({
           </div>
         </div>
 
-        <ImagesLayout id={post.id} images={[`${BASE_URL}/${post.id}/user.webp`, `${BASE_URL}/${post.id}/environment.webp`]} />
+        <ImagesLayout id={post.id} images={[`${BASE_URL}/${post.id}/user.webp`, `${BASE_URL}/${post.id}/environment.webp`]}>
+          {!post.visible && (
+            <div className="absolute top-0 left-0 w-full h-full flex flex-col gap-2 items-center justify-center z-10 bg-bckg/80">
+              <span className="text-center font-bold text-2xl">OCULTO</span>
+            </div>
+          )}
+        </ImagesLayout>
 
         {post.caption && (
           <div className="px-2 opacity-80">
