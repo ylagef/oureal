@@ -20,7 +20,9 @@ export const CreatePost = () => {
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const [deviceId, setDeviceId] = useState({})
+  const [frontDeviceId, setFrontDeviceId] = useState({})
+  const [backDeviceId, setBackDeviceId] = useState({})
+
   const [devices, setDevices] = useState([])
 
   const handleDevices = useCallback((mediaDevices: any) => setDevices(mediaDevices.filter(({ kind }: any) => kind === 'videoinput')), [setDevices])
@@ -28,6 +30,15 @@ export const CreatePost = () => {
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices)
   }, [handleDevices])
+
+  useEffect(() => {
+    if (devices.length > 0) {
+      const front: any = devices.find((device: any) => device.label.includes('front'))
+      const back: any = devices.find((device: any) => device.label.includes('back'))
+      setFrontDeviceId(front?.deviceId)
+      setBackDeviceId(back?.deviceId)
+    }
+  }, [devices])
 
   alert(JSON.stringify(devices))
 
@@ -190,7 +201,7 @@ export const CreatePost = () => {
           ref={environmentWebcamRef}
           className={`absolute top-0 left-0 h-full object-cover transition-transform ${swapped ? '' : 'translate-x-full'}`}
           videoConstraints={{
-            facingMode: { exact: 'environment' }
+            deviceId: backDeviceId
           }}
           audio={false}
           screenshotQuality={1}
@@ -202,7 +213,7 @@ export const CreatePost = () => {
           ref={userWebcamRef}
           className={`absolute top-0 left-0 h-full object-cover transition-transform -scale-x-100 z-10 ${swapped ? '-translate-x-full' : ''}`}
           videoConstraints={{
-            facingMode: { exact: 'user' }
+            deviceId: frontDeviceId
           }}
           audio={false}
           screenshotQuality={1}
