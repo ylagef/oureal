@@ -23,23 +23,6 @@ export const CreatePost = () => {
   const [frontDeviceId, setFrontDeviceId] = useState({})
   const [backDeviceId, setBackDeviceId] = useState({})
 
-  const [devices, setDevices] = useState([])
-
-  const handleDevices = useCallback((mediaDevices: any) => setDevices(mediaDevices.filter(({ kind }: any) => kind === 'videoinput')), [setDevices])
-
-  useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then(handleDevices)
-  }, [handleDevices])
-
-  useEffect(() => {
-    if (devices.length > 0) {
-      const front: any = devices.find((device: any) => device.label.includes('front'))
-      const back: any = devices.find((device: any) => device.label.includes('back'))
-      setFrontDeviceId(front?.deviceId)
-      setBackDeviceId(back?.deviceId)
-    }
-  }, [devices])
-
   const waitSeconds = async (seconds: number) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -110,7 +93,17 @@ export const CreatePost = () => {
       const imagesObj = JSON.parse(lsImages) as Images
       setImages(imagesObj)
     }
-    setLoading(false)
+
+    navigator.mediaDevices.enumerateDevices().then((mediaDevices: any) => {
+      const devices = mediaDevices.filter(({ kind }: any) => kind === 'videoinput')
+      const front: any = devices.find((device: any) => device.label.includes('front'))
+      const back: any = devices.find((device: any) => device.label.includes('back'))
+
+      setFrontDeviceId(front?.deviceId)
+      setBackDeviceId(back?.deviceId)
+
+      setLoading(false)
+    })
   }, [])
 
   if (loading || !frontDeviceId || !backDeviceId) {
