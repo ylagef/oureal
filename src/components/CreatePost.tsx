@@ -19,6 +19,7 @@ export const CreatePost = () => {
   const [name, setName] = useState('')
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(true)
+  const [taking, setTaking] = useState(false)
 
   const waitSeconds = async (seconds: number) => {
     return new Promise((resolve) => {
@@ -29,27 +30,16 @@ export const CreatePost = () => {
   }
 
   const handleTake = async () => {
-    try {
-      const currentWebcam = swapped ? environmentWebcamRef.current : userWebcamRef.current
-      const otherWebcam = swapped ? userWebcamRef.current : environmentWebcamRef.current
+    setTaking(true)
+    const currentWebcam = swapped ? environmentWebcamRef.current : userWebcamRef.current
 
-      await waitSeconds(1)
-      const currentImage = currentWebcam?.getScreenshot()
-      if (!currentImage) return
+    await waitSeconds(1)
+    const currentImage = currentWebcam?.getScreenshot()
+    if (!currentImage) return
 
-      setImages((prev) => ({ ...prev, [swapped ? 'environment' : 'user']: currentImage }))
+    setImages((prev) => ({ ...prev, [swapped ? 'environment' : 'user']: currentImage }))
 
-      setSwapped((prev) => !prev)
-      await waitSeconds(1)
-
-      const otherImage = otherWebcam?.getScreenshot()
-      if (!otherImage) return
-
-      setImages((prev) => ({ ...prev, [swapped ? 'user' : 'environment']: otherImage }))
-      setSwapped(false)
-    } catch (e) {
-      alert(e)
-    }
+    setSwapped((prev) => !prev)
   }
 
   const handleCreatePost = async () => {
@@ -80,6 +70,20 @@ export const CreatePost = () => {
     element.style.height = 5 + element.scrollHeight + 'px'
   }
 
+  useEffect(() => {
+    if (!taking) return
+    ;(async () => {
+      await waitSeconds(1)
+
+      const otherWebcam = swapped ? userWebcamRef.current : environmentWebcamRef.current
+      const otherImage = otherWebcam?.getScreenshot()
+      if (!otherImage) return
+
+      setImages((prev) => ({ ...prev, [swapped ? 'user' : 'environment']: otherImage }))
+      setSwapped(false)
+      setTaking(false)
+    })()
+  }, [swapped])
   useEffect(() => {
     if (images.user && images.environment) localStorage.setItem('images', JSON.stringify(images))
   }, [images])
@@ -201,13 +205,17 @@ export const CreatePost = () => {
           />
         )}
 
-        <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4 z-20">
-          <img src="/camera.svg" className="w-6 h-6" />
-        </button>
+        {!taking && (
+          <>
+            <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4 z-20">
+              <img src="/camera.svg" className="w-6 h-6" />
+            </button>
 
-        <button onClick={() => setSwapped((prev) => !prev)} className="absolute top-6 right-6 bg-white opacity-50 rounded-full p-2 z-20">
-          <img src="/camera-rotate.svg" className="w-4 h-4" />
-        </button>
+            <button onClick={() => setSwapped((prev) => !prev)} className="absolute top-6 right-6 bg-white opacity-50 rounded-full p-2 z-20">
+              <img src="/camera-rotate.svg" className="w-4 h-4" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   )
