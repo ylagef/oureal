@@ -20,9 +20,6 @@ export const CreatePost = () => {
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const [frontDeviceId, setFrontDeviceId] = useState({})
-  const [backDeviceId, setBackDeviceId] = useState({})
-
   const waitSeconds = async (seconds: number) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -93,20 +90,10 @@ export const CreatePost = () => {
       const imagesObj = JSON.parse(lsImages) as Images
       setImages(imagesObj)
     }
-
-    navigator.mediaDevices.enumerateDevices().then((mediaDevices: any) => {
-      const devices = mediaDevices.filter(({ kind }: any) => kind === 'videoinput')
-      const front: any = devices.find((device: any) => device.label.includes('front'))
-      const back: any = devices.find((device: any) => device.label.includes('back'))
-
-      setFrontDeviceId(front?.deviceId)
-      setBackDeviceId(back?.deviceId)
-
-      setLoading(false)
-    })
+    setLoading(false)
   }, [])
 
-  if (loading || !frontDeviceId || !backDeviceId) {
+  if (loading) {
     return (
       <div className="flex flex-col h-full">
         <div className="sticky top-0 z-10 p-2 backdrop-blur-sm w-full">
@@ -188,29 +175,31 @@ export const CreatePost = () => {
   return (
     <div className="w-full h-full bg-bckg overflow-x-hidden">
       <div className="w-full h-full relative grid items-center">
-        <Webcam
-          ref={environmentWebcamRef}
-          className={`absolute top-0 left-0 h-full object-cover transition-transform ${swapped ? '' : 'translate-x-full'}`}
-          videoConstraints={{
-            deviceId: backDeviceId
-          }}
-          audio={false}
-          screenshotQuality={1}
-          forceScreenshotSourceSize
-          screenshotFormat="image/webp"
-        />
-
-        <Webcam
-          ref={userWebcamRef}
-          className={`absolute top-0 left-0 h-full object-cover transition-transform -scale-x-100 z-10 ${swapped ? '-translate-x-full' : ''}`}
-          videoConstraints={{
-            deviceId: frontDeviceId
-          }}
-          audio={false}
-          screenshotQuality={1}
-          forceScreenshotSourceSize
-          screenshotFormat="image/webp"
-        />
+        {swapped ? (
+          <Webcam
+            ref={environmentWebcamRef}
+            className={`absolute top-0 left-0 h-full object-cover`}
+            videoConstraints={{
+              facingMode: { exact: 'environment' }
+            }}
+            audio={false}
+            screenshotQuality={1}
+            forceScreenshotSourceSize
+            screenshotFormat="image/webp"
+          />
+        ) : (
+          <Webcam
+            ref={userWebcamRef}
+            className={`absolute top-0 left-0 h-full object-cover`}
+            videoConstraints={{
+              facingMode: { exact: 'user' }
+            }}
+            audio={false}
+            screenshotQuality={1}
+            forceScreenshotSourceSize
+            screenshotFormat="image/webp"
+          />
+        )}
 
         <button onClick={handleTake} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white opacity-50 rounded-full p-4 z-20">
           <img src="/camera.svg" className="w-6 h-6" />
