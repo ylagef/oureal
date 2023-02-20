@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Webcam from 'react-webcam'
 import { createPost } from '../utils/supabase'
 import { ImagesLayout } from './ImagesLayout'
@@ -19,6 +19,17 @@ export const CreatePost = () => {
   const [name, setName] = useState('')
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(true)
+
+  const [deviceId, setDeviceId] = useState({})
+  const [devices, setDevices] = useState([])
+
+  const handleDevices = useCallback((mediaDevices: any) => setDevices(mediaDevices.filter(({ kind }: any) => kind === 'videoinput')), [setDevices])
+
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices().then(handleDevices)
+  }, [handleDevices])
+
+  alert(JSON.stringify(devices))
 
   const waitSeconds = async (seconds: number) => {
     return new Promise((resolve) => {
