@@ -179,10 +179,9 @@ export const CreatePost = () => {
           ref={environmentWebcamRef}
           className={`absolute top-0 left-0 h-full object-cover transition-transform ${swapped ? '' : 'translate-x-full'}`}
           videoConstraints={{
-            facingMode: 'environment'
+            facingMode: { exact: 'environment' }
           }}
           audio={false}
-          imageSmoothing
           screenshotQuality={1}
           forceScreenshotSourceSize
           screenshotFormat="image/webp"
@@ -192,10 +191,9 @@ export const CreatePost = () => {
           ref={userWebcamRef}
           className={`absolute top-0 left-0 h-full object-cover transition-transform -scale-x-100 z-10 ${swapped ? '-translate-x-full' : ''}`}
           videoConstraints={{
-            facingMode: 'user'
+            facingMode: { exact: 'user' }
           }}
           audio={false}
-          imageSmoothing
           screenshotQuality={1}
           forceScreenshotSourceSize
           screenshotFormat="image/webp"
