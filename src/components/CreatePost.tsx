@@ -169,7 +169,7 @@ export const CreatePost = () => {
   }
 
   return (
-    <div className="w-full h-full bg-bckg">
+    <div className="w-full h-full bg-bckg overflow-x-hidden">
       <div className="w-full h-full relative grid items-center">
         <Webcam
           ref={environmentWebcamRef}
