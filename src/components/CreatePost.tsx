@@ -30,7 +30,6 @@ export const CreatePost = () => {
   }
 
   const handleTake = async () => {
-    setTaking(true)
     const currentWebcam = swapped ? environmentWebcamRef.current : userWebcamRef.current
 
     await waitSeconds(1)
@@ -72,17 +71,7 @@ export const CreatePost = () => {
 
   useEffect(() => {
     if (!taking) return
-    ;(async () => {
-      await waitSeconds(1)
-
-      const otherWebcam = swapped ? userWebcamRef.current : environmentWebcamRef.current
-      const otherImage = otherWebcam?.getScreenshot()
-      if (!otherImage) return
-
-      setImages((prev) => ({ ...prev, [swapped ? 'user' : 'environment']: otherImage }))
-      setSwapped(false)
-      setTaking(false)
-    })()
+    handleTake()
   }, [swapped])
   useEffect(() => {
     if (images.user && images.environment) localStorage.setItem('images', JSON.stringify(images))
