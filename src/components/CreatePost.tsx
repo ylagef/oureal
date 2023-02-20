@@ -29,23 +29,27 @@ export const CreatePost = () => {
   }
 
   const handleTake = async () => {
-    const currentWebcam = swapped ? environmentWebcamRef.current : userWebcamRef.current
-    const otherWebcam = swapped ? userWebcamRef.current : environmentWebcamRef.current
+    try {
+      const currentWebcam = swapped ? environmentWebcamRef.current : userWebcamRef.current
+      const otherWebcam = swapped ? userWebcamRef.current : environmentWebcamRef.current
 
-    await waitSeconds(1)
-    const currentImage = currentWebcam?.getScreenshot()
-    if (!currentImage) return
+      await waitSeconds(1)
+      const currentImage = currentWebcam?.getScreenshot()
+      if (!currentImage) return
 
-    setImages((prev) => ({ ...prev, [swapped ? 'environment' : 'user']: currentImage }))
+      setImages((prev) => ({ ...prev, [swapped ? 'environment' : 'user']: currentImage }))
 
-    setSwapped((prev) => !prev)
-    await waitSeconds(1)
+      setSwapped((prev) => !prev)
+      await waitSeconds(1)
 
-    const otherImage = otherWebcam?.getScreenshot()
-    if (!otherImage) return
+      const otherImage = otherWebcam?.getScreenshot()
+      if (!otherImage) return
 
-    setImages((prev) => ({ ...prev, [swapped ? 'user' : 'environment']: otherImage }))
-    setSwapped(false)
+      setImages((prev) => ({ ...prev, [swapped ? 'user' : 'environment']: otherImage }))
+      setSwapped(false)
+    } catch (e) {
+      alert(e)
+    }
   }
 
   const handleCreatePost = async () => {
