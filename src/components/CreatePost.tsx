@@ -40,8 +40,6 @@ export const CreatePost = () => {
     }
   }, [devices])
 
-  alert(JSON.stringify(devices))
-
   const waitSeconds = async (seconds: number) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -115,7 +113,7 @@ export const CreatePost = () => {
     setLoading(false)
   }, [])
 
-  if (loading) {
+  if (loading || !frontDeviceId || !backDeviceId) {
     return (
       <div className="flex flex-col h-full">
         <div className="sticky top-0 z-10 p-2 backdrop-blur-sm w-full">
